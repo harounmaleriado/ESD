@@ -1,6 +1,7 @@
 /** Body CSS sample **/
 body {   
     background:rgb(255,255,255);
+    position: static;
  }
  /** Flatted button %placeholder **/
  %btn-flat {
@@ -12,6 +13,23 @@ body {
     border-radius: 5rem;
     /* margin-right: 2rem;  Icon sample spacing */
  }
+
+.btn-rounded .spn {
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.nav-link {
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.mr-sm-2{
+   width: 100%;
+}
+
  /** Button Iconed **/
  .btn {
   &-iconed {
@@ -59,4 +77,5 @@ body {
    }
   }
  }
+ 
  /** style.scss -- source **/
