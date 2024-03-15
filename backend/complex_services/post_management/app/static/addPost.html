@@ -13,10 +13,10 @@
       <h1>Enter details</h1>
 
       <h4>Name</h4> 
-      <input id="enterName" type="text"> 
+      <input id="name" type="text"> 
 
       <h4>Description</h4> 
-      <input id="enterDesc" type="text"> <br><br>
+      <input id="desc" type="text"> <br><br>
 
       <h4><label for="category">Choose a category:</label></h4>
       <select name="category" id="category">
@@ -26,10 +26,11 @@
       <option value="">TV & Home Appliances</option>
       <option value="">Audio</option>
       <option value="">Photography</option>
+      <option value="">Others</option>
       </select><br><br>
 
       <h4>Collection Location</h4> 
-      <input id="enterLocation" type="text"> 
+      <input id="location" type="text"> 
       <br><br><br>
 
       <button id="insert">INSERT</button>
@@ -85,9 +86,10 @@
         const db = getFirestore(app);
         // const analytics = getAnalytics(app);
 
-        var name = document.querySelector("#enterName");
-        var desc = document.querySelector("#enterDesc");
-        var location = document.querySelector("#enterLocation");
+        var name = document.querySelector("#name");
+        var desc = document.querySelector("#desc");
+        var location = document.querySelector("#location");
+        var category = document.querySelector("#category");
         var findName = document.querySelector("#findName");
         var findDesc = document.querySelector("#findDesc");
         var findLocation = document.querySelector("#findLocation");
@@ -146,7 +148,8 @@
   var newPost = {
     name: name,
     desc: desc,
-    location: location
+    location: location,
+    category: category
   };
 
   // Insert
@@ -155,17 +158,18 @@
   // Delete
   const deleteBtn = document.querySelector("#remove");
   deleteBtn.addEventListener('click', () => {
-    const docId = document.querySelector("#enterID").value; // Assuming the document ID is entered in the input field with ID "enterID"
+    const docId = document.querySelector("#name").value;
     deletePost(docId);
   });
 
   // Update
   updateBtn.addEventListener('click', async () => {
-    const titleToFind = document.querySelector("#enterName").value;
-    const updatedContent = document.querySelector("#enterAge").value; // For demonstration purposes
+    const updatedName = document.querySelector("#name").value;
+    const updatedDesc = document.querySelector("#desc").value;
+    const updatedCategory = document.querySelector("#category").value;
     
     // Query Firestore to find the document by title
-    const querySnapshot = await getDocs(query(collection(db, "post"), where("title", "==", titleToFind)));
+    const querySnapshot = await getDocs(query(collection(db, "post"), where("name", "==", updatedName)));
     let docId = null;
 
     querySnapshot.forEach((doc) => {
@@ -177,8 +181,10 @@
     // Proceed with the update if the document ID was found
     if (docId) {
         const updatedData = {
-            title: titleToFind,
-            content: updatedContent,
+            name: updatedName,
+            age: updatedAge,
+            category: updatedCategory
+
         };
 
         updatePost(docId, updatedData);
