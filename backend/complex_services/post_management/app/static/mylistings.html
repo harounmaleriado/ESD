@@ -22,9 +22,9 @@
 
             <br><br><br>
 
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"></div>
-
-
+            <div class="container">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="userCardContainer"></div>
+              </div>
 
 
 
@@ -37,12 +37,13 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getFirestore, collection, doc, query, where, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
     import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
-
+  
+    // Your web app's Firebase configuration
     const firebaseConfig = {
       // Your Firebase config
-        apiKey: "AIzaSyACeAF5_819WDlV2PM7FEQQ5R2YGGWklCM",
+      apiKey: "AIzaSyACeAF5_819WDlV2PM7FEQQ5R2YGGWklCM",
         authDomain: "techexchange-76048.firebaseapp.com",
         databaseURL: "https://techexchange-76048-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "techexchange-76048",
@@ -52,66 +53,66 @@
         measurementId: "G-51BT4968FL"
     };
   
-    function formatTimestamp(timestamp) {
-        const date = new Date(timestamp.seconds * 1000);
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // getMonth() is zero-indexed
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
-
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const storage = getStorage(app);
-  
-    // Function to get the query parameter value for 'category'
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
+
+    function formatTimestamp(timestamp) {
+      const date = new Date(timestamp.seconds * 1000);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
     }
 
-    async function displayItemsByCategory() {
-      const category = getQueryParam('category');
-    //   console.log("taylor", category);
-        const q = query(collection(db, "post"), where("category", "array-contains", category));
-    //   console.log("Result", q)
-      const querySnapshot = await getDocs(q);
-      const itemsContainer = document.querySelector('.row');
-    //   console.log(querySnapshot.size)
-      querySnapshot.forEach(async (doc) => {
-        const data = doc.data();
-        const imageRef = storageRef(storage, `gs://techexchange-76048.appspot.com/${data.name}.png`);
-        const imgUrl = await getDownloadURL(imageRef);
+   async function getUserDocument() {
+  const userDocRef = doc(db, "users", "eke7zjaf5hJFJkleq6jQ"); // Reference to the user document
+  const userDocSnap = await getDoc(userDocRef);
 
-        const locationString = `Latitude: ${data.location.latitude}, Longitude: ${data.location.longitude}`;
-        const formattedDate = formatTimestamp(data.datetime); // Assuming data.datetime is the timestamp
-        console.log("result", data.category)
-        const cardHtml = `
-      <div class="col">
-        <div class="card shadow-sm">
-          <img src="${imgUrl}" class="d-block w-100" alt="${data.name}">
-          <div class="card-body">
-            <h5 class="card-title">${data.name}</h5>
-            <p class="card-text">${data.desc}</p>
-            <p class="card-text">Location: ${locationString}</p>
-            <p class="card-text">Posted on: ${formattedDate}</p>
-            <p class="card-text">Category: ${data.category}</p>
-            <div class="d-flex justify-content-between align-items-center">
-            <small class="text-muted">${formattedDate} mins ago</small>
+  if (userDocSnap.exists()) {
+    const postsQuery = query(collection(db, "post"), where("user_id", "==", "eke7zjaf5hJFJkleq6jQ"));
+    const querySnapshot = await getDocs(postsQuery);
+    const userCardContainer = document.getElementById("userCardContainer");
+
+    querySnapshot.forEach(async (postDoc) => {
+      const postData = postDoc.data();
+      const imageRef = storageRef(storage, `gs://techexchange-76048.appspot.com/${postData.name}.png`);
+      const imgUrl = await getDownloadURL(imageRef);
+
+      const locationString = `Latitude: ${postData.location.latitude}, Longitude: ${postData.location.longitude}`;
+      const formattedDate = formatTimestamp(postData.datetime);
+
+      const cardHtml = `
+        <div class="col">
+          <div class="card shadow-sm">
+            <img src="${imgUrl}" class="d-block w-100" alt="${postData.name}">
+            <div class="card-body">
+              <h5 class="card-title">${postData.name}</h5>
+              <p class="card-text">${postData.desc}</p>
+              <p class="card-text">Location: ${locationString}</p>
+              <p class="card-text">Posted on: ${formattedDate}</p>
+              <p class="card-text">Category: ${postData.category}</p>
+              <div class="d-flex justify-content-between align-items-center">
+              <small class="text-muted">${formattedDate} mins ago</small>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    `;
+      `;
 
-    itemsContainer.innerHTML += cardHtml;
+      userCardContainer.innerHTML += cardHtml;
+    });
+  } else {
+    console.log("No such user document!");
+  }
+}
 
-      });
-    }
-  
-    displayItemsByCategory();
+getUserDocument();
+
+
   </script>
+  
   </body>
 
 
