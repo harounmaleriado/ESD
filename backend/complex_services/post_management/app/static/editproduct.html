@@ -161,42 +161,25 @@ document.getElementById("update").addEventListener("click", async (event) => {
     document.getElementById("remove").addEventListener("click", async (event) => {
     event.preventDefault();  // Prevent the default form submit action
 
-    const newName = document.getElementById("name").value;
-    const newDesc = document.getElementById("desc").value;
-    const newCategory = document.getElementById("category").value;
-    const newLocation = document.getElementById("location").value;
+    if (confirm("Are you sure you want to delete this product?")) {
+        try {
+            if (!productId) {
+                console.error('Product ID is not defined.');
+                return;
+            }
 
-    if (userDocSnap.exists()) {
-    const postsQuery = query(collection(db, "post"));
-    const querySnapshot = await getDocs(postsQuery);
+            const docRef = doc(db, "post", productId);  // Direct reference to the document
 
-    querySnapshot.forEach(async (postDoc) => {
-        // console.log('result', postDoc.id)
-        const docRef = doc(db, "post", postDoc.id);
-        const docSnap = await getDoc(docRef);
-        const postData = postDoc.data();
-        // Check if docRef is defined inside this scope or make sure it's accessible
-    if (!docRef) {
-        console.error('Document reference is not defined.');
-        return;
-    }
-
-    try {
-        await deleteDoc(docRef, {
-            name: newName,
-            desc: newDesc,
-            category: newCategory,
-            location: newLocation
-        });
-        alert("Product deleted successfully!");
-        // Optionally, redirect or refresh the page to reflect the updates
-        // window.location.href = "your_redirection_url_or_same_page";
-    } catch (error) {
-        console.error("Error updating document:", error);
-        alert("Error updating product. Please try again.");
+            await deleteDoc(docRef);
+            alert("Product deleted successfully!");
+            window.location.href = "mylistings.html"; // Redirect to mylistings.html
+        } catch (error) {
+            console.error("Error deleting document:", error);
+            alert("Error deleting product. Please try again.");
+        }
     }
 });
-    }})
+
 
   </script>
 </body>

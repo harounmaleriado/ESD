@@ -20,33 +20,29 @@
 
       <h4><label for="category">Choose a category:</label></h4>
       <select name="category" id="category">
-      <option value="">Computers</option>
-      <option value="">Mobile Phones & Accessories</option>
-      <option value="">Video Gaming</option>
-      <option value="">TV & Home Appliances</option>
-      <option value="">Audio</option>
-      <option value="">Photography</option>
-      <option value="">Others</option>
+      <option value="Computers">Computers</option>
+      <option value="Mobile Phones and Accessories">Mobile Phones & Accessories</option>
+      <option value="Video Gaming">Video Gaming</option>
+      <option value="TV and Home Appliances">TV & Home Appliances</option>
+      <option value="Audio">Audio</option>
+      <option value="Photography">Photography</option>
       </select><br><br>
 
       <h4>Collection Location</h4> 
-      <input id="location" type="text"> 
+      <input id="city" type="text" placeholder="Enter city">
       <br><br><br>
 
       <button id="insert">INSERT</button>
-      <button id="update">UPDATE</button>
-      <button id="remove">REMOVE</button> <br><br>
   </div>
 </body>
   
     <footer>
-        <p>&copy; 2023 HARD CYCLE</p>
+        <p>&copy; 2023 Tech-Exchange</p>
     </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     
       <script src="auth.js"></script>
       <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -54,11 +50,10 @@
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
       <script type="module">
         // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-        import { doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-        import { doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
 
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
@@ -75,122 +70,58 @@
         measurementId: "G-51BT4968FL"
       };
       
-        // Initialize Firebase
-        // const app = initializeApp(firebaseConfig);
-        // const auth = firebase.auth();
-        const app = initializeApp(firebaseConfig);
+       
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const auth = getAuth(app);
 
-        // import {getDatabase, set, get, update, remove}
-        // from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"
+      document.getElementById("insert").addEventListener("click", async (event) => {
+    event.preventDefault();
 
-        const db = getFirestore(app);
-        // const analytics = getAnalytics(app);
+    const city = document.getElementById("city").value;
 
-        var name = document.querySelector("#name");
-        var desc = document.querySelector("#desc");
-        var location = document.querySelector("#location");
-        var category = document.querySelector("#category");
-        var findName = document.querySelector("#findName");
-        var findDesc = document.querySelector("#findDesc");
-        var findLocation = document.querySelector("#findLocation");
-
-        var insertBtn = document.querySelector("#insert");
-        var updateBtn = document.querySelector("#update");
-        var removeBtn = document.querySelector("#remove");
-        var findBtn = document.querySelector("#find");
-        
-       // Function to add a new post
-      async function addPost(postData) {
-        try {
-          const docRef = await addDoc(collection(db, "post"), postData);
-          console.log("Document written with ID: ", docRef.id);
-        } catch (e) {
-          console.error("Error adding document: ", e);
-        }
-      }
-
-      async function getPost(docId) {
-        const docRef = doc(db, "post", docId);
-        const docSnap = await getDoc(docRef);
-        
-        if (docSnap.exists()) {
-          console.log("Document data:", docSnap.data());
-          return docSnap.data();
-        } else {
-          console.log("No such document!");
-          return null;
-        }
-      }
-
-      async function deletePost(docId) {
-        const docRef = doc(db, "post", docId);
-        
-        try {
-          await deleteDoc(docRef);
-          console.log("Document successfully deleted!");
-        } catch (error) {
-          console.error("Error removing document: ", error);
-        }
-      }
-
-      // async function updatePost(docId, updatedData) {
-      //   const docRef = doc(db, "posts", docId);
-        
-      //   try {
-      //     await updateDoc(docRef, updatedData);
-      //     console.log("Document successfully updated!");
-      //   } catch (error) {
-      //     console.error("Error updating document: ", error);
-      //   }
-      // }
-
-  // Example usage
-  var newPost = {
-    name: name,
-    desc: desc,
-    location: location,
-    category: category
-  };
-
-  // Insert
-  insertBtn.addEventListener('click', () => addPost(newPost));
-
-  // Delete
-  const deleteBtn = document.querySelector("#remove");
-  deleteBtn.addEventListener('click', () => {
-    const docId = document.querySelector("#name").value;
-    deletePost(docId);
-  });
-
-  // Update
-  // updateBtn.addEventListener('click', async () => {
-  //   const updatedName = document.querySelector("#name").value;
-  //   const updatedDesc = document.querySelector("#desc").value;
-  //   const updatedCategory = document.querySelector("#category").value;
-    
-    // Query Firestore to find the document by title
-    const querySnapshot = await getDocs(query(collection(db, "post"), where("name", "==", updatedName)));
-    let docId = null;
-
-    querySnapshot.forEach((doc) => {
-        // Assuming the title is unique, we'll get only one result
-        console.log(`${doc.id} => ${doc.data().title}`);
-        docId = doc.id; // Get the document ID
-    });
-
-    // Proceed with the update if the document ID was found
-    if (docId) {
-        const updatedData = {
-            name: updatedName,
-            age: updatedAge,
-            category: updatedCategory
-
-        };
-
-        updatePost(docId, updatedData);
-    } else {
-        console.log("Document not found with the given title.");
+    if (!city) {
+        alert("Please enter a city name.");
+        return;
     }
+
+    const apiKey = '177ad839670b4ef3bd6a75e4d69d7141';
+    const requestUrl = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(city)}&key=${apiKey}`;
+
+    try {
+        const response = await fetch(requestUrl);
+        const data = await response.json();
+
+        if (data.results.length > 0) {
+            const { lat, lng } = data.results[0].geometry;
+
+            const userId = "eke7zjaf5hJFJkleq6jQ";
+            const nameValue = document.getElementById("name").value;
+            const descValue = document.getElementById("desc").value;
+            const categoryValue = document.getElementById("category").value;
+            const dateTime = new Date();
+
+            const postData = {
+                name: nameValue,
+                desc: descValue,
+                category: categoryValue,
+                location: { latitude: lat, longitude: lng },
+                userId: userId,
+                datetime: dateTime
+            };
+
+            const docRef = await addDoc(collection(db, "post"), postData);
+            console.log("Document written with ID: ", docRef.id);
+            alert("New post added successfully!");
+        } else {
+            alert("Could not find the location.");
+        }
+    } catch (error) {
+        console.error("Error fetching location: ", error);
+        alert("Error adding new post.");
+    }
+});
+
 
 </script>
 </body>
