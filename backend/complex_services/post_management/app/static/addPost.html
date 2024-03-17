@@ -133,16 +133,16 @@
         }
       }
 
-      async function updatePost(docId, updatedData) {
-        const docRef = doc(db, "posts", docId);
+      // async function updatePost(docId, updatedData) {
+      //   const docRef = doc(db, "posts", docId);
         
-        try {
-          await updateDoc(docRef, updatedData);
-          console.log("Document successfully updated!");
-        } catch (error) {
-          console.error("Error updating document: ", error);
-        }
-      }
+      //   try {
+      //     await updateDoc(docRef, updatedData);
+      //     console.log("Document successfully updated!");
+      //   } catch (error) {
+      //     console.error("Error updating document: ", error);
+      //   }
+      // }
 
   // Example usage
   var newPost = {
@@ -163,10 +163,10 @@
   });
 
   // Update
-  updateBtn.addEventListener('click', async () => {
-    const updatedName = document.querySelector("#name").value;
-    const updatedDesc = document.querySelector("#desc").value;
-    const updatedCategory = document.querySelector("#category").value;
+  // updateBtn.addEventListener('click', async () => {
+  //   const updatedName = document.querySelector("#name").value;
+  //   const updatedDesc = document.querySelector("#desc").value;
+  //   const updatedCategory = document.querySelector("#category").value;
     
     // Query Firestore to find the document by title
     const querySnapshot = await getDocs(query(collection(db, "post"), where("name", "==", updatedName)));
@@ -191,7 +191,6 @@
     } else {
         console.log("Document not found with the given title.");
     }
-});
 
 </script>
 </body>
