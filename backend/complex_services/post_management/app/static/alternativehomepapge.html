@@ -73,7 +73,7 @@
 
      <!-- <div class="album py-5 bg-light"> -->
         <div class="filter-container">
-            <button id="toggleSortPrice">Show Cheapest</button>
+            <button id="toggleSort">Show Oldest</button>
         </div>
           
 
@@ -127,25 +127,27 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-let isShowingCheapestFirst = true;
+let isShowingMostRecent = true;
 
-async function applyPriceFilter() {
+async function applyFilter(order = "mostRecent") {
     const itemsContainer = document.querySelector('.row');
-    itemsContainer.innerHTML = '';
+    itemsContainer.innerHTML = '';  // Clear existing posts
 
-    let orderPrice = isShowingCheapestFirst ? "asc" : "desc";
-    let postsQuery = query(collection(db, "post"), orderBy("price", orderPrice));
+    let postsQuery = query(
+        collection(db, "post"),
+        orderBy("datetime", order === "mostRecent" ? "desc" : "asc")
+    );
 
     const querySnapshot = await getDocs(postsQuery);
-    let posts = []; // Define the posts array
+    const posts = [];
 
     for (const doc of querySnapshot.docs) {
         const data = doc.data();
+        console.log(`${data.name}: ${data.datetime.toDate()}`);
         const imageRef = storageRef(storage, `gs://techexchange-76048.appspot.com/${data.name}.png`);
         const imgUrl = await getDownloadURL(imageRef);
         const formattedDate = data.datetime.toDate().toLocaleDateString("en-GB") + ' ' + data.datetime.toDate().toLocaleTimeString("en-GB");
 
-        // Push the post data into the posts array
         posts.push({
             ...data,
             imgUrl,
@@ -153,7 +155,7 @@ async function applyPriceFilter() {
         });
     }
 
-    // Now iterate over the posts array to create and append the card HTML
+    // Now that all URLs have been fetched, render the posts
     posts.forEach(data => {
         const cardHtml = `
             <div class="col">
@@ -179,22 +181,18 @@ async function applyPriceFilter() {
 }
 
 
+applyFilter("mostRecent");
 
-    function toggleSortOrderPrice() {
-    isShowingCheapestFirst = !isShowingCheapestFirst;
-    document.getElementById('toggleSortPrice').innerText = isShowingCheapestFirst ? "Show Cheapest" : "Show Expensive";
-    applyPriceFilter();
+
+function toggleSortOrder() {
+    isShowingMostRecent = !isShowingMostRecent;
+    document.getElementById('toggleSort').innerText = isShowingMostRecent ? "Show Oldest" : "Show Most Recent";
+    applyFilter(isShowingMostRecent ? "mostRecent" : "oldest");
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('toggleSortPrice').addEventListener('click', toggleSortOrderPrice);
-    applyPriceFilter(); // Apply the initial filter
+document.addEventListener('DOMContentLoaded', (event) => {
+    document.getElementById('toggleSort').addEventListener('click', toggleSortOrder);
 });
-
-function createAndAppendPostCard(postData, container) {
-    const cardHtml = `...`; // Construct the card HTML based on postData
-    container.innerHTML += cardHtml;
-}
 
 
     </script>

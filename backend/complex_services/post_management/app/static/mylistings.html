@@ -106,6 +106,7 @@ async function getUserDocument(order = "mostRecent") {
                         <img src="${data.imgUrl}" class="d-block w-100" alt="${data.name}">
                         <div class="card-body">
                             <h5 class="card-title">${data.name}</h5>
+                            <p class="card-subtitle">$${data.price}</p>
                             <p class="card-text">${data.desc}</p>
                             <p class="card-text">Location: ${data.location.latitude}, ${data.location.longitude}</p>
                             <p class="card-text">Posted on: ${data.formattedDate}</p>
