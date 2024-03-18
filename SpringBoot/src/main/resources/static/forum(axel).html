@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Forum</title>
+    <link rel="stylesheet" href="forumstyle.css">
+</head>
+<body>
+    <header>
+        <h1>Simple Forum</h1>
+    </header>
+    <main>
+        <section id="forum">
+            <h2>Topics</h2>
+            <ul id="topicsList">
+                <!-- Topics will be listed here -->
+            </ul>
+        </section>
+        <section id="addTopic">
+            <h2>Add a New Topic</h2>
+            <form id="newTopicForm">
+                <input type="text" id="newTopicTitle" placeholder="Title" required>
+                <textarea id="newTopicContent" placeholder="Content" required></textarea>
+                <button type="submit">Add Topic</button>
+            </form>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
