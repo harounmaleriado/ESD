@@ -1,3 +1,19 @@
+.suggestions-container {
+   position: absolute;
+   border: 1px solid #ddd;
+   border-top: none;
+   z-index: 100;
+}
+
+.suggestions-container div {
+   padding: 10px;
+   cursor: pointer;
+   background: #fff;
+}
+
+.suggestions-container div:hover {
+   background-color: #f1f1f1;
+}
 
 /** Body CSS sample **/
 body {   

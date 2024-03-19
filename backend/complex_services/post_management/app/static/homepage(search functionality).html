@@ -73,7 +73,7 @@
 
      <!-- <div class="album py-5 bg-light"> -->
         <div class="filter-container">
-            <button id="toggleSortPrice">Show Cheapest to Expensive</button>
+            <button id="toggleSortPrice">Show Cheapest</button>
         </div>
           
 
@@ -88,7 +88,7 @@
 
     <script type="module">
        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-       import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+       import { getFirestore, collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
        // Your web app's Firebase configuration
@@ -129,31 +129,63 @@ const storage = getStorage(app);
 
 let isShowingCheapestFirst = true;
 
-async function applyPriceFilter() {
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(window.location.search);
+    const searchTerm = params.get('search');
+
+    if (searchTerm) {
+        // Fetch and display products based on the search term
+        let searchQuery = query(collection(db, "post"), where("name", "==", searchTerm));
+        const querySnapshot = await getDocs(searchQuery);
+        const searchResults = [];
+
+        for (const doc of querySnapshot.docs) {
+            const data = doc.data();
+            const imgUrl = await getDownloadURL(storageRef(storage, `gs://techexchange-76048.appspot.com/${data.name}.png`));
+            const formattedDate = formatTimestamp(data.datetime);
+
+            searchResults.push({
+                ...data,
+                imgUrl,
+                formattedDate
+            });
+        }
+
+        // Apply the price filter to search results
+        fetchAndDisplayProducts(searchResults);
+    } else {
+        // No search term, just apply the price filter
+        fetchAndDisplayProducts();
+    }
+});
+
+async function fetchAndDisplayProducts(searchResults = null) {
     const itemsContainer = document.querySelector('.row');
     itemsContainer.innerHTML = '';
+    let posts = [];
 
-    let orderPrice = isShowingCheapestFirst ? "asc" : "desc";
-    let postsQuery = query(collection(db, "post"), orderBy("price", orderPrice));
+    if (searchResults) {
+        posts = searchResults;
+    } else {
+        let orderPrice = isShowingCheapestFirst ? "asc" : "desc";
+        let postsQuery = query(collection(db, "post"), orderBy("price", orderPrice));
+        const querySnapshot = await getDocs(postsQuery);
 
-    const querySnapshot = await getDocs(postsQuery);
-    let posts = []; // Define the posts array
+        for (const doc of querySnapshot.docs) {
+            const data = doc.data();
+            const imgUrl = await getDownloadURL(storageRef(storage, `gs://techexchange-76048.appspot.com/${data.name}.png`));
+            const formattedDate = formatTimestamp(data.datetime);
 
-    for (const doc of querySnapshot.docs) {
-        const data = doc.data();
-        const imageRef = storageRef(storage, `gs://techexchange-76048.appspot.com/${data.name}.png`);
-        const imgUrl = await getDownloadURL(imageRef);
-        const formattedDate = data.datetime.toDate().toLocaleDateString("en-GB") + ' ' + data.datetime.toDate().toLocaleTimeString("en-GB");
-
-        // Push the post data into the posts array
-        posts.push({
-            ...data,
-            imgUrl,
-            formattedDate
-        });
+            posts.push({
+                ...data,
+                imgUrl,
+                formattedDate
+            });
+        }
     }
 
-    // Now iterate over the posts array to create and append the card HTML
+    // Display the posts
     posts.forEach(data => {
         const cardHtml = `
             <div class="col">
@@ -178,46 +210,10 @@ async function applyPriceFilter() {
     });
 }
 
-
-
-    function toggleSortOrderPrice() {
+function toggleSortOrderPrice() {
     isShowingCheapestFirst = !isShowingCheapestFirst;
-    document.getElementById('toggleSortPrice').innerText = isShowingCheapestFirst ? "Show Cheapest to Expensive" : "Show Expensive to Cheapest";
+    document.getElementById('toggleSortPrice').innerText = isShowingCheapestFirst ? "Show Cheapest" : "Show Expensive";
     applyPriceFilter();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('toggleSortPrice').addEventListener('click', toggleSortOrderPrice);
-    applyPriceFilter(); // Apply the initial filter
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const searchForm = document.getElementById('searchForm'); // Ensure you have this ID on your form
-    const searchInput = document.getElementById('searchInput'); // And this ID on your input field
-    const resultsContainer = document.getElementById('resultsContainer'); // Container to display results
-
-    searchForm.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Prevent default form submission behavior
-        const searchTerm = searchInput.value;
-        const response = await fetch(`http://localhost:8000/search/?query=${searchTerm}`);
-        const products = await response.json();
-
-        // Clear previous results
-        resultsContainer.innerHTML = '';
-
-        // Display new results
-        products.forEach(product => {
-            const productElement = document.createElement('div');
-            productElement.textContent = product.name; // Adjust according to your product structure
-            resultsContainer.appendChild(productElement);
-        });
-    });
-});
-
-
-function createAndAppendPostCard(postData, container) {
-    const cardHtml = `...`; // Construct the card HTML based on postData
-    container.innerHTML += cardHtml;
 }
 
 
