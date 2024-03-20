@@ -51,13 +51,13 @@
                             <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=Computers'">Computers</button>
                         </li>
                         <li class="nav-filter">
-                            <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=Mobile Phones and Accessories'">Mobile Phones & Accessories</button>
+                            <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=' + encodeURIComponent('Mobile Phones and Accessories')">Mobile Phones & Accessories</button>
                         </li>
                         <li class="nav-filter">
-                            <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=Video Gaming'">Video Gaming</button>
+                            <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=' + encodeURIComponent('Video Gaming')">Video Gaming</button>
                         </li>
                         <li class="nav-filter">
-                            <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=TV and Home Appliances'">TV & Home Appliances</button>
+                            <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=' + encodeURIComponent('TV and Home Appliances')">TV & Home Appliances</button>
                         </li>
                         <li class="nav-filter">
                             <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=Audio'">Audio</button>
@@ -103,7 +103,7 @@
         measurementId: "G-51BT4968FL"
       };
 
-      function formatTimestamp(timestamp) {
+    function formatTimestamp(timestamp) {
     let date;
     if (timestamp.toDate) {
         // If it's a Firestore Timestamp
@@ -189,12 +189,12 @@ async function applyPriceFilter() {
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('toggleSortPrice').addEventListener('click', toggleSortOrderPrice);
     applyPriceFilter(); // Apply the initial filter
-});
+
 
 document.addEventListener('DOMContentLoaded', () => {
-    const searchForm = document.getElementById('searchForm'); // Ensure you have this ID on your form
-    const searchInput = document.getElementById('searchInput'); // And this ID on your input field
-    const resultsContainer = document.getElementById('resultsContainer'); // Container to display results
+    const searchForm = document.getElementById('searchForm');
+    const searchInput = document.getElementById('searchInput');
+    const resultsContainer = document.getElementById('resultsContainer'); 
 
     searchForm.addEventListener('submit', async (event) => {
         event.preventDefault(); // Prevent default form submission behavior
@@ -212,6 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resultsContainer.appendChild(productElement);
         });
     });
+});
 });
 
 
