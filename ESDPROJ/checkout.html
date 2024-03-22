@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Purchase your new kit</title>
+<style>
+  /* Center the content */
+  body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Additional styling for the content */
+  .content {
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="content">
+    <h1>Purchase your new kit</h1>
+    <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+    <stripe-buy-button
+      buy-button-id="buy_btn_1OwJYpC0QgRlIqeyn3WYfKqB"
+      publishable-key="pk_test_51OrzrBC0QgRlIqeyDzXT5JQIaqbfPKeKJaTJpreud7qdxvn0YL64cCxEBgnBC95H8EZo3rpROws9X4mmlpvuTmG200NqqkX8Iq">
+    </stripe-buy-button>
+  </div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "ESDPROJ",
+			"path": "."
+		},
+		{
+			"name": "ESD",
+			"path": "../../../../Documents/ESD"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "ESDPROJ"
+	}
+}

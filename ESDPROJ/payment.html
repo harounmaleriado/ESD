@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Checkout</title>
+</head>
+<body>
+    <h1>Sample Product</h1>
+    <p>This is a sample product description.</p>
+    <img src="https://example.com/product-image.jpg" alt="Product Image" style="width: 200px; height: auto;">
+    <p>Price: $10.00</p>
+    <button id="checkout-button">Pay Now</button>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        var stripe = Stripe('pk_test_51OuVhfCSYPnK2eFyf16JdQeCfSSaNV9tFohmDAFgGXpuPUNn38MNI1XTOrNqUQQayzNKbbiYf88Chh3vZswZRMMe00K6vbM27J');
+        var checkoutButton = document.getElementById('checkout-button');
+
+        checkoutButton.addEventListener('click', function() {
+            fetch('/create-checkout-session', {
+                method: 'POST',
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(session) {
+                return stripe.redirectToCheckout({ sessionId: session.id });
+            })
+            .then(function(result) {
+                if (result.error) {
+                    console.error(result.error.message);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+
+    <script>
+        const stripe = Stripe('pk_test_51OuVhfCSYPnK2eFyf16JdQeCfSSaNV9tFohmDAFgGXpuPUNn38MNI1XTOrNqUQQayzNKbbiYf88Chh3vZswZRMMe00K6vbM27J');
+
+        document.getElementById('checkout-button').addEventListener('click', function() {
+            fetch('/create-checkout-session', {
+                method: 'POST',
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(session) {
+                return stripe.redirectToCheckout({ sessionId: session.id });
+            })
+            .then(function(result) {
+                if (result.error) {
+                    console.error(result.error.message);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
