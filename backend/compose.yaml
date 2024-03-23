@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq-mgmt
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 'SWQOKODSQALRPCLNMEQG'
+      RABBITMQ_DEFAULT_USER: 'user'
+      RABBITMQ_DEFAULT_PASS: 'password'
+      RABBITMQ_DEFAULT_VHOST: '/'
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - kong-net
+
+  auth-mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: 'authentication'
+    ports:
+      - "3306:3306"
+    networks:
+      - kong-net
+    volumes:
+      - ./mysql:/docker-entrypoint-initdb.d
+      - auth-mysql-data:/var/lib/mysql
+
+  auth-service:
+    image: tshaun/auth:1.3
+    environment:
+      RABBITMQ_HOST: rabbitmq-mgmt
+      RABBITMQ_PORT: 5672
+      RABBITMQ_DEFAULT_USER: 'user'
+      RABBITMQ_DEFAULT_PASS: 'password'
+      dbURL: "mysql+pymysql://ESDPrj@auth-mysql:3306/authentication"
+    depends_on:
+      - rabbitmq
+      - auth-mysql
+    networks:
+      - kong-net
+
+  profile-service:
+    image: tshaun/profile:1.3
+    environment:
+      RABBITMQ_HOST: rabbitmq-mgmt
+      RABBITMQ_PORT: 5672
+      RABBITMQ_DEFAULT_USER: 'user'
+      RABBITMQ_DEFAULT_PASS: 'password'
+    depends_on:
+      - rabbitmq
+    networks:
+      - kong-net
+
+  review-service:
+    image: tshaun/review:1.1
+    environment:
+      RABBITMQ_HOST: rabbitmq-mgmt
+      RABBITMQ_PORT: 5672
+      RABBITMQ_DEFAULT_USER: 'user'
+      RABBITMQ_DEFAULT_PASS: 'password'
+      dbURL: "mysql+pymysql://ESDPrj@host.docker.internal:3306/review_database"
+    depends_on:
+      - rabbitmq
+    networks:
+      - kong-net
+
+  amqp-setup:
+    image: tshaun/amqp_setup:1.0
+    environment:
+      RABBITMQ_HOST: rabbitmq-mgmt
+      RABBITMQ_PORT: 5672
+      RABBITMQ_DEFAULT_USER: 'user'
+      RABBITMQ_DEFAULT_PASS: 'password'
+    depends_on:
+      - rabbitmq
+    networks:
+      - kong-net
+
+networks:
+  kong-net:
+    name: kong-net
+    driver: bridge

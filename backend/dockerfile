@@ -1,0 +1,15 @@
+# Use the official Python base image
+FROM python:3.9-slim
+
+# Set the working directory in the container to /app
+WORKDIR /app
+
+# Copy the Python requirements file and install the dependencies
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the amqp_setup.py script into the container
+COPY amqp_setup.py ./
+
+# Command to run when the container starts
+CMD ["python", "amqp_setup.py"]
