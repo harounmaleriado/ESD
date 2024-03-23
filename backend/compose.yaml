@@ -16,9 +16,11 @@ services:
       - kong-net
 
   auth-mysql:
-    image: mysql:5.7
+    image: mysql:8.0
     environment:
       MYSQL_DATABASE: 'authentication'
+      MYSQL_USER: 'ESDPrj'
+      MYSQL_ROOT_PASSWORD: 'root'
     ports:
       - "3306:3306"
     networks:
@@ -26,15 +28,40 @@ services:
     volumes:
       - ./mysql:/docker-entrypoint-initdb.d
       - auth-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  review-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: 'review_database'  
+      MYSQL_USER: 'reviewUser'  
+      MYSQL_PASSWORD: 'reviewPass'  
+      MYSQL_ROOT_PASSWORD: 'reviewRootPass' 
+    ports:
+      - "3307:3306" 
+    volumes:
+      - ./review-mysql:/docker-entrypoint-initdb.d
+      - review-mysql-data:/var/lib/mysql
+    networks:
+      - kong-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   auth-service:
-    image: tshaun/auth:1.3
+    image: tshaun/auth:1.5
     environment:
       RABBITMQ_HOST: rabbitmq-mgmt
       RABBITMQ_PORT: 5672
       RABBITMQ_DEFAULT_USER: 'user'
       RABBITMQ_DEFAULT_PASS: 'password'
-      dbURL: "mysql+pymysql://ESDPrj@auth-mysql:3306/authentication"
+      dbURL: "mysql+pymysql://ESDPrj:root@auth-mysql:3306/authentication"
     depends_on:
       - rabbitmq
       - auth-mysql
@@ -54,15 +81,16 @@ services:
       - kong-net
 
   review-service:
-    image: tshaun/review:1.1
+    image: tshaun/review:1.3
     environment:
       RABBITMQ_HOST: rabbitmq-mgmt
       RABBITMQ_PORT: 5672
       RABBITMQ_DEFAULT_USER: 'user'
       RABBITMQ_DEFAULT_PASS: 'password'
-      dbURL: "mysql+pymysql://ESDPrj@host.docker.internal:3306/review_database"
+      dbURL: "mysql+pymysql://reviewUser:reviewPass@review-mysql:3306/review_database"
     depends_on:
       - rabbitmq
+      - review-mysql
     networks:
       - kong-net
 
@@ -82,3 +110,9 @@ networks:
   kong-net:
     name: kong-net
     driver: bridge
+
+volumes:
+  auth-mysql-data:
+    name: auth-mysql-data
+  review-mysql-data:
+    name: review-mysql-data
