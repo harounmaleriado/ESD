@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Headphones Product Page</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 800px;
+        } */
+
+        .main {
+            text-align: center;
+            align-items: center;
+            border: 2px solid #ccc;
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            /* Added relative positioning */
+        }
+
+        /* .product-description {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .product-description span {
+            font-size: 12px;
+            color: #358ED7;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .product-description h1 {
+            font-weight: 300;
+            font-size: 52px;
+            color: #43484D;
+            letter-spacing: -2px;
+        }
+
+        .product-description p {
+            font-size: 16px;
+            font-weight: 300;
+            color: #86939E;
+            line-height: 24px;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .product-price span {
+            font-size: 26px;
+            font-weight: 300;
+            color: #43474D;
+            margin-right: 20px;
+        } */
+
+        .cart-btn {
+            display: inline-block;
+            background-color: #323232;
+            border-color: red;
+            border-radius: 6px;
+            font-size: 16px;
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 12px 30px;
+            transition: all .5s;
+            position: absolute;
+            /* Added absolute positioning */
+            bottom: 20px;
+            /* Adjust as needed */
+            left: 50%;
+            /* Center horizontally */
+            transform: translateX(-50%);
+            /* Center horizontally */
+        }
+
+        .cart-btn:hover {
+            background-color: #64af3d;
+        }
+
+        /* .carousel-item img {
+            width: 300px;
+            height: auto;
+        } */
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        .left-container {
+            width: 50%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .carousel {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .carousel img {
+            width: 100%;
+            height: auto;
+            display: none;
+        }
+
+        .carousel img:first-child {
+            display: block;
+        }
+
+        .right-container {
+            width: 50%;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="left-container">
+            <div class="carousel">
+                <img src="image1.jpg" alt="Image 1">
+                <img src="image2.jpg" alt="Image 2">
+                <img src="image3.jpg" alt="Image 3">
+            </div>
+        </div>
+        <!-- Product Description -->
+        <div class="right-container">
+            <span>Headphones</span>
+            <div>
+                <h1>Beats EP</h1>
+                <p>The preferred choice of a vast range of acclaimed DJs. Punchy, bass-focused sound and high isolation.
+                    Sturdy headband and on-ear cushions suitable for live performance. MEET UP ONLY</p>
+            </div>
+        </div>
+
+        <!-- Product Pricing -->
+        <div class="product-price">
+            <span>S$148</span>
+            <a href="#" class="cart-btn">Chat with seller</a>
+        </div>
+    </div>
+    </main>
+    </div>
+</body>
+
+<script>
+    $(document).ready(function () {
+
+        $('.color-choose input').on('click', function () {
+            var headphonesColor = $(this).attr('data-image');
+
+            $('.active').removeClass('active');
+            $('.left-column img[data-image = ' + headphonesColor + ']').addClass('active');
+            $(this).addClass('active');
+        });
+
+    });
+</script>
+
+</html>
