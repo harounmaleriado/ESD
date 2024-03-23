@@ -1,0 +1,20 @@
+/* Adjusting the button style to match the theme */
+.btn-primary {
+    background-image: linear-gradient(92.88deg, #455EB5 9.16%, #455EB5 9.16%, #455EB5 9.16%);
+    border: none;
+    color: white;
+}
+
+/* Additional styling for the login form and card */
+.card {
+    border-radius: 15px; /* Rounded corners for the card */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* shadow for depth */
+}
+
+.card-body {
+    padding: 2rem; /* padding inside the card */
+}
+
+h3 {
+    margin-bottom: 1.5rem; /* space above the form */
+}
