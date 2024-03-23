@@ -4,26 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Headphones Product Page</title>
+    <title>Product Page</title>
     <style>
-        html,
-        body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            font-family: 'Roboto', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* .container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            max-width: 800px;
-        } */
-
         .main {
             text-align: center;
             align-items: center;
@@ -31,51 +13,7 @@
             border-radius: 20px;
             padding: 20px;
             position: relative;
-            /* Added relative positioning */
         }
-
-        /* .product-description {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .product-description span {
-            font-size: 12px;
-            color: #358ED7;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            text-decoration: none;
-            margin-right: 10px;
-        }
-
-        .product-description h1 {
-            font-weight: 300;
-            font-size: 52px;
-            color: #43484D;
-            letter-spacing: -2px;
-        }
-
-        .product-description p {
-            font-size: 16px;
-            font-weight: 300;
-            color: #86939E;
-            line-height: 24px;
-        }
-
-        .product-price {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-        }
-
-        .product-price span {
-            font-size: 26px;
-            font-weight: 300;
-            color: #43474D;
-            margin-right: 20px;
-        } */
 
         .cart-btn {
             display: inline-block;
@@ -86,103 +24,87 @@
             color: #FFFFFF;
             text-decoration: none;
             padding: 12px 30px;
-            transition: all .5s;
-            position: absolute;
-            /* Added absolute positioning */
-            bottom: 20px;
-            /* Adjust as needed */
-            left: 50%;
-            /* Center horizontally */
-            transform: translateX(-50%);
-            /* Center horizontally */
         }
 
         .cart-btn:hover {
             background-color: #64af3d;
         }
-
-        /* .carousel-item img {
-            width: 300px;
-            height: auto;
-        } */
+        .profile-container{
+            
+            transition: all .5s;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
 
         .container {
             display: flex;
-            width: 100%;
-        }
-
-        .left-container {
-            width: 50%;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .carousel {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .carousel img {
-            width: 100%;
-            height: auto;
-            display: none;
-        }
-
-        .carousel img:first-child {
-            display: block;
-        }
-
-        .right-container {
-            width: 50%;
-            padding: 20px;
-            box-sizing: border-box;
+            flex-direction: column;
+            align-items: center;
             background-color: #f2f2f2;
+            border-radius: 15px;
+            border: 2px solid #ccc;
+            margin-top: 10%;
+            padding: 20px;
+        }
+
+        .img_container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .img_container img {
+            width: 40%;
+            margin: 10px;
+            /* Adjust margin as needed */
+            object-fit: cover;
+            border-radius: 10px;
+            /* Add border radius */
+        }
+
+        .product-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: rgb(135, 131, 130);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        h1 {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="left-container">
-            <div class="carousel">
-                <img src="image1.jpg" alt="Image 1">
-                <img src="image2.jpg" alt="Image 2">
-                <img src="image3.jpg" alt="Image 3">
-            </div>
+        <div class="img_container">
+            <img src="https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg" alt="">
+            <img src="https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg" alt="">
         </div>
+
         <!-- Product Description -->
-        <div class="right-container">
-            <span>Headphones</span>
-            <div>
-                <h1>Beats EP</h1>
-                <p>The preferred choice of a vast range of acclaimed DJs. Punchy, bass-focused sound and high isolation.
-                    Sturdy headband and on-ear cushions suitable for live performance. MEET UP ONLY</p>
-            </div>
+        <div>
+            <h1>Beats EP</h1>
+            <p>The preferred choice of a vast range of acclaimed DJs. Punchy, bass-focused sound and high isolation.
+                Sturdy headband and on-ear cushions suitable for live performance. MEET UP ONLY</p>
         </div>
-
-        <!-- Product Pricing -->
         <div class="product-price">
-            <span>S$148</span>
-            <a href="#" class="cart-btn">Chat with seller</a>
+            <span>S$148</span></div>
+        <!-- Product Pricing -->
+        <div class="profile-container">
+            <a href="#" class="cart-btn">Chat with seller</a> 
+            
         </div>
+
+        <div class="buy">
+            <a href="#" class="cart-btn">Buy Now</a>   
+        </div>
+
     </div>
-    </main>
-    </div>
+
 </body>
-
-<script>
-    $(document).ready(function () {
-
-        $('.color-choose input').on('click', function () {
-            var headphonesColor = $(this).attr('data-image');
-
-            $('.active').removeClass('active');
-            $('.left-column img[data-image = ' + headphonesColor + ']').addClass('active');
-            $(this).addClass('active');
-        });
-
-    });
-</script>
 
 </html>
