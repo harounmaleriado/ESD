@@ -1,0 +1,6 @@
+{
+  "firestore": {
+    "rules": "ESDPROJ",
+    "indexes": "ESDPROJ"
+  }
+}
