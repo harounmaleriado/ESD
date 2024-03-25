@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save the Planet!</title>
+  
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="recycle.css">
+</head>
+<body id="app">
+
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="homepage.html">HARD CYCLE</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-between" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="aboutus.html">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="marketplace.html">Market Place</a>
+          </li>
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Recycle
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item disabled">How to Recycle your E-Waste</a>
+              <a class="dropdown-item" href="dropoff.html">E-Waste Bin Locations</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="community-info.html" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Communities 
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li><a class="dropdown-item" href="community-info.html">About Support Community </a></li>
+                <li><a class="dropdown-item" href="community-guides.html">How to Earn Points</a></li>
+                <li><a class="dropdown-item" href="forum-landingpg.html">HARD CYCLE's Community</a></li>               
+            </ul>
+          </li>
+        </ul>
+        <div class="nav-item d-flex" id="userAuth">
+            <a href="" data-toggle="modal" data-target="#Register" class="logged-out text-reset me-2" style="display:none">
+                Register 
+            </a>
+            <a href="" data-toggle="modal" data-target="#Login" class="logged-out text-reset" style="display:none">
+                Login 
+            </a>
+            <a href=""  display="hidden" id="signout" class="logged-in text-reset" style="display:none">
+                Sign Out
+            </a>
+        </div>
+      </div>
+      
+    </div>
+  </nav>
+
+  <!-- Carousel Section -->
+  <div class="carousel slide mt-4" id="ewasteCarousel" data-ride="carousel">
+    <div class="container border border-secondary">
+      <h3 class="border-bottom border-secondary">Types of E-Waste</h3>
+      <div class="carousel-inner">
+        <!-- Add your carousel items here -->
+        <!-- Example: -->
+        <div class="carousel-item active">
+            <h5>Information and Communication Equipment</h5>
+            <img src="https://static.thenounproject.com/png/252447-200.png">
+            <ul class="list-group">
+                <li class="list-group-item">Printer</li>
+                <li class="list-group-item">Computer</li>
+                <li class="list-group-item">Laptop</li>
+                <li class="list-group-item">Tablet</li>
+                <li class="list-group-item">Monitor</li>
+                <li class="list-group-item">Router</li>
+                <li class="list-group-item">Modem</li>
+                <li class="list-group-item">Set-Top Box</li>
+                <li class="list-group-item">Network Switch</li>
+                <li class="list-group-item">Network Hub</li>
+                <li class="list-group-item">Mobile Telephone</li>
+            </ul>
+        </div>
+        <div class="carousel-item">
+            <h5>Large Household Appliance</h5>
+            <img src="https://static.thenounproject.com/png/1205515-200.png">
+            <ul class="list-group">
+                <li class="list-group-item">Consumer Refrigerator</li>
+                <li class="list-group-item">Air Conditioner</li>
+                <li class="list-group-item">Washing Machine</li>
+                <li class="list-group-item">Dryer</li>
+                <li class="list-group-item">Television</li>
+            </ul>
+        </div>
+        <div class="carousel-item">
+            <h5>Electric Mobility Device</h5>
+            <img src="https://static.thenounproject.com/png/1141070-200.png">
+            <ul class="list-group">
+                <li class="list-group-item">Personal Mobility Device</li>
+                <li class="list-group-item">Power Assisted Bicycle</li>
+                <li class="list-group-item">Electric Mobility Scooter</li>
+            </ul>
+        </div>
+        <div class="carousel-item">
+            <h5>Household Battery</h5>
+            <img src="https://static.thenounproject.com/png/2090538-200.png">
+            <ul class="list-group">
+                <li class="list-group-item">D</li>
+                <li class="list-group-item">C</li>
+                <li class="list-group-item">AA</li>
+                <li class="list-group-item">AAA</li>
+                <li class="list-group-item">AAAA</li>
+                <li class="list-group-item">N</li>
+                <li class="list-group-item">9V</li>
+                <li class="list-group-item">Button Cell</li>
+            </ul>
+        </div>
+        <div class="carousel-item">
+            <h5>Lithium-Ion Portable Battery</h5>
+            <img src="https://static.thenounproject.com/png/887370-200.png">
+            <ul class="list-group">
+                <li class="list-group-item">Powerbank</li>
+                <li class="list-group-item">Mobile Telephone Battery</li>
+                <li class="list-group-item">Laptop Battery</li>
+            </ul>
+        </div>
+        <div class="carousel-item">
+            <h5>Consumer Lamp</h5>
+            <img src="https://static.thenounproject.com/png/7582-200.png">
+            <img src="https://static.thenounproject.com/png/1850460-200.png">
+            <ul class="list-group">
+                <li class="list-group-item">Bulb</li>
+                <li class="list-group-item">Fluorescent Tube</li>
+            </ul>
+        </div>
+      </div>
+      <a class="carousel-control-prev" href="#ewasteCarousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#ewasteCarousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Recycling Options Section -->
+  <div class="container mt-4 border border-secondary">
+    <h3>These are the various locations for you to drop off your E-Waste!</h3>
+    </p>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Drop off Locations</h5>
+            <a href="dropoff.html" class="btn btn-primary" target="_blank">Select</a>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="col-md-4 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Doorstep Collection</h5>
+            <a href="#" class="btn btn-primary">Select</a>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+
+  <!-- Google Maps Section -->
+
+  <!-- Footer Section -->
+  <!-- Add your footer here if needed -->
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="recycle.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap"></script>
+
+</body>
+</html>
