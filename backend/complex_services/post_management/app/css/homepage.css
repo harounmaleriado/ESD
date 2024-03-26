@@ -130,4 +130,24 @@ footer {
     filter: invert(100%); /* Invert the color of the control button icons */
 }
 
+#searchResults {
+    z-index: 1000;
+    width: 90%;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.suggestion {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestion:hover {
+    background-color: #f8f8f8;
+}
+
 

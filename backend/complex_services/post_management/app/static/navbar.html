@@ -1,7 +1,10 @@
 
 <link rel="stylesheet" href="../css/navbar.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch/dist/algoliasearch-lite.umd.js"></script>
+<link rel="stylesheet" href="navbar.css">
 
+<body>
 <nav id="nav" class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
         <div class="container-fluid">
           <a class="navbar-brand" href="homepage.html">Tech-Exchange</a>
@@ -25,10 +28,8 @@
              </button> &nbsp;
               </a>
             </ul>
-            <form class="form-inline my-2 my-lg-0 d-flex align-items-center" action="homepage.html" method="GET">
-              <input class="form-control my-lg-0 col-12" type="search" id="searchInput" name="search" placeholder="Search for products" aria-label="Search">  &nbsp;
-              <button class="btn btn-outline-success my-2" type="submit">Search</button>
-            </form> &nbsp; &nbsp; &nbsp;
+          
+           &nbsp; &nbsp; &nbsp;
             <div class="nav-item d-flex" id="userAuth">
             <!-- <li class="nav-item dropdown"> -->
             <a href="chats.html">
@@ -52,12 +53,14 @@
           </div>
           
         </div>
+      </nav>
 
         <script type="module">
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+        import algoliasearch from 'https://cdn.jsdelivr.net/npm/algoliasearch/dist/algoliasearch-lite.umd.js';
 
        // Your web app's Firebase configuration
        const firebaseConfig = {
@@ -74,6 +77,8 @@
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
       const storage = getStorage(app);
+      const client = algoliasearch('60IC04XR8A', '3b334f990956ade50fd2618975c1f586');
+      const index = client.initIndex('search_posts');
 
       document.addEventListener('DOMContentLoaded', async () => {
   const params = new URLSearchParams(window.location.search);
@@ -117,6 +122,44 @@
   }
 });
 
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    console.log("searchInput element:", searchInput);
+    const suggestionsPanel = document.getElementById('suggestionsPanel');
 
+    const client = algoliasearch('60IC04XR8A', '3b334f990956ade50fd2618975c1f586');
+    const index = client.initIndex('search_posts');
+
+    console.log("Event listener attached");
+    searchInput.addEventListener('input', () => {
+      console.log("Input event triggered");
+      const query = searchInput.value.trim();
+
+      if (query.length > 0) {
+        index.search(query).then(({ hits }) => {
+          console.log("Search executed");
+          console.log("Hits:", hits);
+          suggestionsPanel.innerHTML = ''; // Clear previous suggestions
+          suggestionsPanel.style.display = hits.length > 0 ? 'block' : 'none'; // Show or hide the panel
+
+          hits.forEach(hit => {
+            const suggestionElement = document.createElement('div');
+            suggestionElement.textContent = hit.name; // Use textContent for text to prevent HTML injection
+            suggestionElement.classList.add('suggestion');
+            suggestionElement.addEventListener('click', () => {
+              console.log(`Redirecting to product details for ${hit.objectID}`);
+              window.location.href = `/productDetails.html?product=${hit.objectID}`;
+            });
+            suggestionsPanel.appendChild(suggestionElement);
+          });
+        });
+      } else {
+        suggestionsPanel.innerHTML = '';
+        suggestionsPanel.style.display = 'none'; // Hide the panel if the query is empty
+      }
+    });
+  }).catch(error => {
+  console.error("Search error:", error);
+});
     </script>
-</nav>
+    </body>

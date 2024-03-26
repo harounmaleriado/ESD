@@ -33,8 +33,11 @@
 
       <h4>Collection Location</h4> 
       <input id="city" type="text" placeholder="Enter city">
-      <br><br><br>
+      
+      <h4>Upload Image</h4>
+      <input type="file" id="imageUpload" accept="image/*"><button id="uploadButton">Upload Image</button>
 
+      <br><br><br>
       <button id="insert">INSERT</button>
   </div>
 </body>
@@ -50,12 +53,13 @@
       <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+      <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js"></script>
       <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
@@ -72,10 +76,10 @@
         measurementId: "G-51BT4968FL"
       };
       
-       
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
       const auth = getAuth(app);
+      const storage = getStorage(app);
 
       document.getElementById("insert").addEventListener("click", async (event) => {
     event.preventDefault();
@@ -100,7 +104,7 @@
             const userId = "eke7zjaf5hJFJkleq6jQ";
             const nameValue = document.getElementById("name").value;
             const descValue = document.getElementById("desc").value;
-            const categoryValue = document.getElementById("category").value;
+            const categoryValue = [document.getElementById("category").value];
             const priceValue = document.getElementById("price").value;
             const dateTime = new Date();
 
@@ -123,6 +127,32 @@
     } catch (error) {
         console.error("Error fetching location: ", error);
         alert("Error adding new post.");
+    }
+});
+
+
+document.getElementById("uploadButton").addEventListener("click", async () => {
+    const imageFile = document.getElementById("imageUpload").files[0];
+    if (!imageFile) {
+        alert("Please select an image to upload.");
+        return;
+    }
+
+    const imageName = imageFile.name;  // Use the file's original name
+    const storageRef = ref(storage, imageName);
+
+    try {
+        const snapshot = await uploadBytes(storageRef, imageFile);
+        console.log('Uploaded a blob or file!', snapshot);
+
+        // Get the download URL and do something with it (e.g., save it in Firestore)
+        const downloadURL = await getDownloadURL(snapshot.ref);
+        console.log('File available at', downloadURL);
+        // Optionally, you can save the downloadURL along with post data in Firestore
+        alert('Image uploaded successfully!');
+    } catch (error) {
+        console.error('Upload failed', error);
+        alert('Upload failed: ' + error.message);
     }
 });
 
