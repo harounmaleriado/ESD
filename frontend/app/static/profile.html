@@ -42,7 +42,13 @@
                 <div class="profile-section">
                     <img src="../assets/profilepicture.png" class="img-fluid rounded-circle mb-3" width="70" height="70">
                     <h3>Tom</h3>
-                    
+                    <p id="bio">Bio goes here....</p>
+                    <p id="contact">Contact details go here...</p>
+                    <p id="email">Email goes here...</p>
+                    <div>
+                      <input type="file" id="profilePicUpload" accept="image/*">
+                      <button onclick="updateProfileInfo()">Save Profile</button>
+                  </div>
                 </div>
             </div>
             <!-- Tabs for Listings and Orders -->
@@ -70,5 +76,104 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
+
+
+
+    <script>
+      let globalUserId = null;
+      // Function to parse the JWT and get the payload
+      function parseJwt(token) {
+          var base64Payload = token.split('.')[1];
+          var payload = JSON.parse(window.atob(base64Payload));
+          return payload;
+      }
+  
+      // Function to redirect to login if JWT is not present
+      function redirectToLogin() {
+          window.location.href = '/app/static/login.html'; // Adjust the path as necessary
+      }
+  
+      // Function to fetch profile data
+      async function fetchProfile(userId) {
+          try {
+              const response = await fetch(`http://localhost:8000/profile/${userId}`);
+              if (!response.ok) {
+                  throw new Error('Network response was not ok');
+              }
+              const profileData = await response.json();
+              updateProfile(profileData);
+              globalUserId = userId;
+          } catch (error) {
+              console.error('Failed to fetch profile:', error);
+          }
+      }
+  
+      // Function to update profile information on the page
+      function updateProfile(profileData) {
+        document.querySelector('.profile-section h3').textContent = profileData.name;
+        document.querySelector('.profile-section img').src = profileData.profilePictureUrl;
+        document.getElementById('bio').textContent = profileData.bio;
+        document.getElementById('contact').textContent = profileData.contact;
+        document.getElementById('email').textContent = profileData.email;
+      }
+      async function updateProfileInfo() {
+        if (!globalUserId) {
+            console.error('User ID is not available.');
+            return;
+        }
+        
+        // Create FormData and append profile data
+        const formData = new FormData();
+        formData.append('name', document.querySelector('.profile-section h3').textContent);
+        formData.append('bio', document.getElementById('bio').textContent);
+        formData.append('contact', document.getElementById('contact').textContent);
+        formData.append('email', document.getElementById('email').textContent);
+        
+        // Append the file, if selected
+        const profilePicInput = document.getElementById('profilePicUpload');
+        if (profilePicInput.files.length > 0) {
+            const file = profilePicInput.files[0];
+            formData.append('profile_pic', file);
+        }
+
+        // Send a PUT request with FormData
+        try {
+            const response = await fetch(`http://localhost:8000/profile/${globalUserId}`, {
+                method: 'PUT',
+                body: formData, // FormData will automatically set the Content-Type to multipart/form-data
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+            console.log(result.message); // Or handle the updated profile information
+        } catch (error) {
+            console.error('Error updating profile:', error);
+        }
+      }
+
+// You will need to call this function when the user wants to update their profile.
+// For example, by attaching it to an event listener on a "Save" button click.
+
+  
+      // Check for JWT and fetch profile
+      document.addEventListener('DOMContentLoaded', () => {
+          const token = localStorage.getItem('jwt_token');
+          if (!token) {
+              redirectToLogin();
+              return;
+          }
+  
+          const payload = parseJwt(token);
+          const globalUserId= payload.sub; // 'sub' contains the user ID
+  
+          fetchProfile(globalUserId);
+      });
+    </script>
+  
 </body>
 </html>
