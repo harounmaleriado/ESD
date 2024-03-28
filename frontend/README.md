@@ -1,5 +1,5 @@
 # Basic Front End
-
+index.html - entrypoint for webpage
 ## Assets 
 Contains images, js codes and css.
 ## Config
