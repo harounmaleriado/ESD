@@ -1,6 +1,10 @@
-# Contains front end code.
+# Basic Front End
 
-**Assets**: Contains images, js codes and css.
-**Config**: Configuration files not related to firebase.
-**Firebase**: Contains firebase specific configurations and keys.
-**Pages**: Contains all HTML files.
+## Assets 
+Contains images, js codes and css.
+## Config
+Configuration files not related to firebase.
+## Firebase
+Contains firebase specific configurations and keys.
+## Pages
+Contains all HTML files.
