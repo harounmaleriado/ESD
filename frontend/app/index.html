@@ -3,42 +3,49 @@
 
 <head>
     <title>Tech-Exchange - Home</title>
-    <link rel="stylesheet" type="text/css" href="../css//homepage.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css//homepage.css">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="//code.jquery.com/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/algoliasearch/dist/algoliasearch-lite.umd.js"></script>
 </head>
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Tech-Exchange</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/marketplace.html">Marketplace</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/profile.html">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pages/forum.html">Forum</a>
-                        </li>
-                    </ul>
+        <script id="replace_with_navbar" src="navbar.js"></script>
+        <div class="container">
+            <div id="carouselExample" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <a href="marketplace.html">
+                            <img src="/assets/images/1.png" class="d-block w-100" alt="Donate Instead of Waste">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="/pages/forum.html">
+                            <img src="/assets/images/2.png" class="d-block w-100" alt="Join Our Donation Drive">
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="marketplace.html">
+                            <img src="/assets/images/3.png" class="d-block w-100" alt="Discuss and Collaborate">
+                        </a>
+                    </div>
                 </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-        </nav>
-
+        </div>
     </header>
 
     <!-- <div class="album py-5 bg-light"> -->
@@ -77,16 +84,20 @@
             </div>
         </div>
     </div>
-    <!-- </div> -->
 
-    <!-- <div class="album py-5 bg-light"> -->
+    <form class="form-inline my-2 my-lg-0 d-flex align-items-center" action="homepage.html" method="GET">
+        <input class="form-control my-lg-0 col-12" type="search" id="searchInput" name="search"
+            placeholder="Search for products" aria-label="Search" autocomplete="off" style="width: 90%;">
+        <!-- <div id="suggestionsPanel" style="display: none; position: absolute; background: white; width: calc(100% - 2px); border: 1px solid #ddd;"></div> -->
+        &nbsp;
+        <button class="btn btn-outline-success my-2" id="searchButton" type="submit">Search</button>
+    </form>
+    <div id="searchResults" class="search-results" style="width: 90%;"></div>
     <div class="filter-container">
         <button id="toggleSortPrice">Show Cheapest to Expensive</button>
     </div>
 
-
-    <br><br><br>
-
+    <br>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
@@ -104,7 +115,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, connectFirestoreEmulator, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
         // Your web app's Firebase configuration
@@ -142,6 +153,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const storage = getStorage(app);
+        const client = algoliasearch('60IC04XR8A', '3b334f990956ade50fd2618975c1f586');
+        const index = client.initIndex('search_posts');
+
+        // connectFirestoreEmulator(db, '127.0.0.1', 8080);
 
         let isShowingCheapestFirst = true;
 
@@ -206,7 +221,6 @@
             document.getElementById('toggleSortPrice').addEventListener('click', toggleSortOrderPrice);
             applyPriceFilter(); // Apply the initial filter
 
-
             document.addEventListener('DOMContentLoaded', () => {
                 const searchForm = document.getElementById('searchForm');
                 const searchInput = document.getElementById('searchInput');
@@ -231,15 +245,73 @@
             });
         });
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            console.log("searchInput element:", searchInput);
+            const suggestionsPanel = document.getElementById('searchResults');
+
+            const client = algoliasearch('60IC04XR8A', '3b334f990956ade50fd2618975c1f586');
+            const index = client.initIndex('search_posts');
+
+            console.log("Event listener attached");
+            searchInput.addEventListener('input', () => {
+                console.log("Input event triggered");
+                const query = searchInput.value.trim();
+
+                if (query.length > 0) {
+                    index.search(query).then(({ hits }) => {
+                        console.log("Search executed");
+                        console.log("Hits:", hits);
+                        suggestionsPanel.innerHTML = ''; // Clear previous suggestions
+                        suggestionsPanel.style.display = hits.length > 0 ? 'block' : 'none'; // Show or hide the panel
+
+                        hits.forEach(hit => {
+                            const suggestionElement = document.createElement('div');
+                            suggestionElement.textContent = hit.name; // Use textContent for text to prevent HTML injection
+                            suggestionElement.classList.add('suggestion');
+                            suggestionElement.addEventListener('click', () => {
+                                console.log(`Redirecting to product details for ${hit.objectID}`);
+                                window.location.href = `productDetails.html?product=${hit.objectID}`;
+                            });
+                            suggestionsPanel.appendChild(suggestionElement);
+                        });
+                    });
+                } else {
+                    suggestionsPanel.innerHTML = '';
+                    suggestionsPanel.style.display = 'none'; // Hide the panel if the query is empty
+                }
+            });
+        });
+
+        // Listen for the enter key or search button click to navigate to product details
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Prevent the default form submission
+                const firstHit = document.querySelector('.suggestion');
+                if (firstHit) {
+                    firstHit.click(); // Simulate a click on the first suggestion
+                }
+            }
+        });
+
+        // Optional: If you have a search button, add an event listener to it as well
+        const searchButton = document.getElementById('searchButton');
+        if (searchButton) {
+            searchButton.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent the default form submission
+                const firstHit = document.querySelector('.suggestion');
+                if (firstHit) {
+                    firstHit.click(); // Simulate a click on the first suggestion
+                }
+            });
+        }
 
         function createAndAppendPostCard(postData, container) {
-            const cardHtml = `...`; // Construct the card HTML based on postData
+            const cardHtml = `...`;
             container.innerHTML += cardHtml;
         }
 
-
     </script>
 </body>
-
 
 </html>
