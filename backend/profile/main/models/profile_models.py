@@ -1,5 +1,5 @@
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, storage
 from os import environ
 
 #cred = credentials.Certificate('E:\Codes\ESD_Tech\profile\main\esd-project-bec59-firebase-adminsdk-3vbkj-566a693eaa.json')
@@ -7,6 +7,8 @@ cred = credentials.Certificate(environ.get('FIREBASE_ADMIN_KEY'))
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
+
+bucket = storage.bucket('esd-project-bec59.appspot.com')
 
 
 class Profile:
@@ -45,11 +47,34 @@ class Profile:
     
     @staticmethod
     def update(profile_data):
+        print(f"Updating profile: {profile_data}")
         user_id = profile_data['user_id']
         doc_ref = db.collection('profiles').where('user_id', '==', user_id).get()
+        print(f"doc_ref: {doc_ref}")
         if doc_ref:
             document_id = doc_ref[0].id  # Get the Firestore document ID
             db.collection('profiles').document(document_id).set(profile_data, merge=True)
+            print(f"new profile data: {profile_data}")
+
+    @staticmethod
+    def upload_file_to_firebase_storage(file, user_id):
+        if not file:
+            return None
+
+        # Create a unique file name or use the user_id
+        filename = f"profile_pictures/{user_id}/{file.filename}"
+        blob = bucket.blob(filename)
+        existing_blob = bucket.blob(f"profile_pictures/{user_id}/current_profile_pic.png")
+        if existing_blob.exists():
+            existing_blob.delete()
+
+        blob.upload_from_string(file.read(), content_type=file.content_type)
+
+        # Make the blob publicly accessible and get the URL
+        blob.make_public()
+        print(f"Uploaded to: {blob.public_url}")
+        return blob.public_url
+
 
 
 

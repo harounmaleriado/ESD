@@ -55,7 +55,7 @@ services:
       retries: 5
 
   auth-service:
-    image: tshaun/auth:1.5
+    image: tshaun/auth:1.8
     environment:
       RABBITMQ_HOST: rabbitmq-mgmt
       RABBITMQ_PORT: 5672
@@ -65,11 +65,12 @@ services:
     depends_on:
       - rabbitmq
       - auth-mysql
+      - amqp-setup
     networks:
       - kong-net
 
   profile-service:
-    image: tshaun/profile:1.3
+    image: tshaun/profile:1.6
     environment:
       RABBITMQ_HOST: rabbitmq-mgmt
       RABBITMQ_PORT: 5672

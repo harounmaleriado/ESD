@@ -40,9 +40,6 @@ CREATE TABLE `reviews` (
 -- Dumping data for table `reviews`
 --
 
-INSERT INTO `reviews` (`review_id`, `reviewer_id`, `reviewee_id`, `message`, `rating`, `created_at`) VALUES
-(1, 1, 2, 'this guy sucks', 1, '2024-03-21 08:08:13');
-
 --
 -- Indexes for dumped tables
 --
