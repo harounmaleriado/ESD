@@ -1,0 +1,12 @@
+.btn-primary {
+    background-image: linear-gradient(92.88deg, #455EB5 9.16%, #455EB5 9.16%, #455EB5 9.16%);
+    border: linear-gradient(92.88deg, #455EB5 9.16%, #455EB5 9.16%, #455EB5 9.16%);
+    color: white;
+}
+
+/* Hover state of the button */
+.btn-primary:hover {
+    background-color: #455EB5; /* Slightly darker blue background on hover */
+    border-color: #455EB5; /* New border color on hover */
+    color: white; /* White text */
+}
