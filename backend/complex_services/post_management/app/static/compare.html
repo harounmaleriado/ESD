@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save the Planet!</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link rel="stylesheet" href="recycle.css">
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth-compat.js"></script>
+  
+  
+  <script>
+
+      const firebaseConfig = { 
+          apiKey: "AIzaSyDvMDBVMhRhwjMCxByvbBlLEBI33glaKrU", 
+          authDomain: "is216-e-wasteless.firebaseapp.com", 
+          databaseURL: "https://is216-e-wasteless-default-rtdb.asia-southeast1.firebasedatabase.app", 
+          projectId: "is216-e-wasteless", 
+          storageBucket: "is216-e-wasteless.appspot.com", 
+          messagingSenderId: "739112462842", 
+          appId: "1:739112462842:web:a5d0e65a44163e23d4dc43", 
+          measurementId: "G-3Q1JMEGCBE" 
+      };
+
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig)
+      const auth = firebase.auth()
+
+  </script>
+</head>
+<body id="app">
+
+  <!-- Navigation Bar -->
+  <script id="replace_with_navbar" src="navbar.js"></script>
+
+  <!-- Carousel Section -->
+  <div id="ewasteCarousel" class="carousel slide text-center" data-bs-ride="carousel" >
+    <div class="container border border-secondary">
+      <h3 class="border-bottom border-secondary">Types of E-Waste</h3>
+      <div class="carousel-inner">
+        <!-- Add your carousel items here -->
+        <!-- Example: -->
+        <div class="carousel-item active ">
+            <h5>Information and Communication Equipment</h5>
+            <img src="https://static.thenounproject.com/png/252447-200.png">
+            <ul class="list-group">
+                <li class="list-group-item">Printer</li>
+                <li class="list-group-item">Computer</li>
+                <li class="list-group-item">Laptop</li>
+                <li class="list-group-item">Tablet</li>
+                <li class="list-group-item">Monitor</li>
+                <li class="list-group-item">Router</li>
+                <li class="list-group-item">Modem</li>
+                <li class="list-group-item">Set-Top Box</li>
+                <li class="list-group-item">Network Switch</li>
+                <li class="list-group-item">Network Hub</li>
+                <li class="list-group-item">Mobile Telephone</li>
+            </ul>
+        </div>
+        <div class="carousel-item">
+            <h5>Large Household Appliance</h5>
+            <img src="https://static.thenounproject.com/png/1205515-200.png">
+            <ul class="list-group">
+                <li class="list-group-item">Consumer Refrigerator</li>
+                <li class="list-group-item">Air Conditioner</li>
+                <li class="list-group-item">Washing Machine</li>
+                <li class="list-group-item">Dryer</li>
+                <li class="list-group-item">Television</li>
+            </ul>
+        </div>
+        <div class="carousel-item">
+            <h5>Electric Mobility Device</h5>
+            <img src="https://static.thenounproject.com/png/1141070-200.png">
+            <ul class="list-group">
+                <li class="list-group-item">Personal Mobility Device</li>
+                <li class="list-group-item">Power Assisted Bicycle</li>
+                <li class="list-group-item">Electric Mobility Scooter</li>
+            </ul>
+        </div>
+        <div class="carousel-item">
+            <h5>Household Battery</h5>
+            <img src="https://static.thenounproject.com/png/2090538-200.png">
+            <ul class="list-group">
+                <li class="list-group-item">D</li>
+                <li class="list-group-item">C</li>
+                <li class="list-group-item">AA</li>
+                <li class="list-group-item">AAA</li>
+                <li class="list-group-item">AAAA</li>
+                <li class="list-group-item">N</li>
+                <li class="list-group-item">9V</li>
+                <li class="list-group-item">Button Cell</li>
+            </ul>
+        </div>
+        <div class="carousel-item">
+            <h5>Lithium-Ion Portable Battery</h5>
+            <img src="https://static.thenounproject.com/png/887370-200.png">
+            <ul class="list-group">
+                <li class="list-group-item">Powerbank</li>
+                <li class="list-group-item">Mobile Telephone Battery</li>
+                <li class="list-group-item">Laptop Battery</li>
+            </ul>
+        </div>
+        <div class="carousel-item">
+            <h5>Consumer Lamp</h5>
+            <img src="https://static.thenounproject.com/png/7582-200.png">
+            <img src="https://static.thenounproject.com/png/1850460-200.png">
+            <ul class="list-group">
+                <li class="list-group-item">Bulb</li>
+                <li class="list-group-item">Fluorescent Tube</li>
+            </ul>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#ewasteCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <button class="carousel-control-next" type="button" data-bs-target="#ewasteCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Google Maps Section -->
+
+  <!-- Footer Section -->
+  <!-- Add your footer here if needed -->
+
+  <!-- Scripts -->
+  <script src="auth.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+   
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tech-Exchange - Home</title>
+    <link rel="stylesheet" type="text/css" href="../css//homepage.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="//code.jquery.com/jquery.min.js"></script>
+</head>
+<body>
+    <script id="replace_with_navbar" src="navbar.js"></script>
+
+     <!-- <div class="album py-5 bg-light"> -->
+        <div class="container">
+            <div class="container">
+              <div class="col">
+                  <div class="overflow-auto">
+                      <ul class="nav nav-tabs justify-content-center">
+                          <li class="nav-filter">
+                              <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=Computers'">Computers</button>
+                          </li>
+                          <li class="nav-filter">
+                              <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=Mobile Phones and Accessories'">Mobile Phones & Accessories</button>
+                          </li>
+                          <li class="nav-filter">
+                              <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=Video Gaming'">Video Gaming</button>
+                          </li>
+                          <li class="nav-filter">
+                              <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=TV and Home Appliances'">TV & Home Appliances</button>
+                          </li>
+                          <li class="nav-filter">
+                              <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=Audio'">Audio</button>
+                          </li>
+                          <li class="nav-filter">
+                              <button type="button" class="btn btn-primary btn-square-md" onclick="location.href='category.html?category=Photography'">Photography</button>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="filter-container">
+            <button id="toggleSortPrice">Show Cheapest to Expensive</button>
+        </div>
+
+            <br><br><br>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+
+    const firebaseConfig = {
+      // Your Firebase config
+        apiKey: "AIzaSyACeAF5_819WDlV2PM7FEQQ5R2YGGWklCM",
+        authDomain: "techexchange-76048.firebaseapp.com",
+        databaseURL: "https://techexchange-76048-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "techexchange-76048",
+        storageBucket: "techexchange-76048.appspot.com",
+        messagingSenderId: "396217100321",
+        appId: "1:396217100321:web:ba771f3033a2caf6ec1b60",
+        measurementId: "G-51BT4968FL"
+    };
+  
+    function formatTimestamp(timestamp) {
+        const date = new Date(timestamp.seconds * 1000);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // getMonth() is zero-indexed
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+  
+    let isShowingCheapestFirst = true;
+
+    // Function to get the query parameter value for 'category'
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    async function displayItemsByCategory() {
+      const category = decodeURIComponent(getQueryParam('category'));
+    //   console.log("taylor", category);
+        const q = query(collection(db, "post"), where("category", "array-contains", category));
+    //   console.log("Result", q)
+      const querySnapshot = await getDocs(q);
+      const itemsContainer = document.querySelector('.row');
+
+      let orderPrice = isShowingCheapestFirst ? "asc" : "desc";
+      let postsQuery = query(collection(db, "post"), orderBy("price", orderPrice));
+
+      itemsContainer.innerHTML = '';
+    //   console.log(querySnapshot.size)
+      querySnapshot.forEach(async (doc) => {
+        const data = doc.data();
+        const imageRef = storageRef(storage, `gs://techexchange-76048.appspot.com/${data.name}.png`);
+        const imgUrl = await getDownloadURL(imageRef);
+
+        const locationString = `Latitude: ${data.location.latitude}, Longitude: ${data.location.longitude}`;
+        const formattedDate = formatTimestamp(data.datetime); // Assuming data.datetime is the timestamp
+        console.log("result", data.category)
+        const cardHtml = `
+      <div class="col">
+        <div class="card shadow-sm">
+          <img src="${imgUrl}" class="d-block w-100" alt="${data.name}">
+          <div class="card-body">
+            <h5 class="card-title">${data.name}</h5>
+            <p class="card-text">${data.desc}</p>
+            <p class="card-text">Location: ${locationString}</p>
+            <p class="card-text">Posted on: ${formattedDate}</p>
+            <p class="card-text">Category: ${data.category}</p>
+            <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">${formattedDate} mins ago</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    itemsContainer.innerHTML += cardHtml;
+
+      });
+    }
+  
+    displayItemsByCategory();
+
+    function toggleSortOrderPrice() {
+    isShowingCheapestFirst = !isShowingCheapestFirst;
+    document.getElementById('toggleSortPrice').innerText = isShowingCheapestFirst ? "Show Cheapest to Expensive" : "Show Expensive to Cheapest";
+    displayItemsByCategory();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('toggleSortPrice').addEventListener('click', toggleSortOrderPrice);
+
+})
+  </script>
+  </body>
+
+
+  </html>

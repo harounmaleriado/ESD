@@ -1,0 +1,98 @@
+.suggestions-container {
+   position: absolute;
+   border: 1px solid #ddd;
+   border-top: none;
+   z-index: 100;
+}
+
+.suggestions-container div {
+   padding: 10px;
+   cursor: pointer;
+   background: #fff;
+}
+
+.suggestions-container div:hover {
+   background-color: #f1f1f1;
+}
+
+/** Body CSS sample **/
+body {   
+    background:rgb(255,255,255);
+    position: static;
+ }
+ /** Flatted button %placeholder **/
+ %btn-flat {
+    border-radius: 0rem;
+    /* margin-right: 2rem; Icon sample spacing */
+ }
+ /** Rounded button **/
+ .btn-rounded {
+    border-radius: 5rem;
+    /* margin-right: 2rem;  Icon sample spacing */
+ }
+
+.btn-rounded .spn {
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.nav-link {
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.mr-sm-2{
+   width: 100%;
+}
+
+ /** Button Iconed **/
+ .btn {
+  &-iconed {
+    transition: .15s ease-in-out;
+    padding-left: 6.5rem;
+    padding-right: 4.5rem;
+    /** Icons Classes **/
+    /** -- Open Iconic, Font Awesome -- **/
+    [class~=oi], [class~=fa],
+    /** -- Since Material, Iconic and Typicons use ::before -- **/
+       [class~=typcn]::before,
+       [class~=mdi]::before, 
+       [class~=icon]::before {
+          opacity: 0;
+          transform-origin: left right;
+          transform: translateX(-10px) scale(1.25);
+          transition: .15s ease-out;
+   }
+   /** Span Class **/
+   [class=spn] {
+       position: relative;
+       left:-9px;
+       transform-origin: left right;
+       transform: translateX(-9px);
+       transition: .20s ease-in-out;
+   }
+    /** -- Icons on Hover properties -- **/
+   &:hover {
+    [class~=oi], [class~=fa],
+    /** -- Since Material, Iconic and Typicons use ::before -- **/
+    [class~=mdi]::before, [class~=icon]::before, [class~="typcn"]::before {
+        opacity: 1;
+        transform: translateX(0px) scale(.75);
+    }
+    /** -- Span on Hover properties -- **/
+    [class=spn] {
+        // transform: translateX(0);
+        left:0px;
+    }
+    // padding-left: 2rem;
+   }
+   /** Flatted button **/
+   &.btn-flat {
+      @extend %btn-flat;
+   }
+  }
+ }
+ 
+ /** style.scss -- source **/

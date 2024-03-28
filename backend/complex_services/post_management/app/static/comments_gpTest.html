@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tech-Exchange</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth-compat.js"></script>
+    
+    
+    <script>
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyDvMDBVMhRhwjMCxByvbBlLEBI33glaKrU", 
+            authDomain: "is216-e-wasteless.firebaseapp.com", 
+            databaseURL: "https://is216-e-wasteless-default-rtdb.asia-southeast1.firebasedatabase.app", 
+            projectId: "is216-e-wasteless", 
+            storageBucket: "is216-e-wasteless.appspot.com", 
+            messagingSenderId: "739112462842", 
+            appId: "1:739112462842:web:a5d0e65a44163e23d4dc43", 
+            measurementId: "G-3Q1JMEGCBE" 
+        };
+        // const firebaseConfig = {
+        //     apiKey: "AIzaSyA6SDPUxrYWmZ5lboxGtSHVVRxpobsKYU4",
+        //     authDomain: "is216-proj-76064.firebaseapp.com",
+        //     projectId: "is216-proj-76064",
+        //     storageBucket: "is216-proj-76064.appspot.com",
+        //     messagingSenderId: "1065642689100",
+        //     appId: "1:1065642689100:web:4efe254f7846a27e4e2ae9"
+        // };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig)
+        const auth = firebase.auth()
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="axiosInterceptor.js"></script>  
+
+
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 1000px;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .search-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+        #product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; 
+        }
+
+        /* #post-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; 
+        } */
+        
+        .product-box {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            transition: transform 0.2s;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            max-width: 370px;
+            max-height: 500px;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+        .product-box:hover {
+            transform: scale(1.04);
+        }
+        .product-image {
+            max-width: 100%;
+            height: 250px;
+        }
+        .sort-dropdown {
+            width: 120px;
+        }
+        h1 {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+        .h1-container {
+            padding-right: 15px; 
+            padding-left: 15px;  
+        }
+        .product-description {
+            cursor: pointer;
+        }
+        footer {
+            text-align: center;
+            margin-top: auto;
+        }
+        .photo{
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column h-100">
+    <script id="replace_with_navbar" src="navbar.js"></script>
+
+<!--Register Modal-->
+<div class="modal fade" id="Register" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content ">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Register a new account</h5>
+        <button type="button" class="close btn btn-secondary" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="signupEmail">Email address</label>
+                    <input type="email" class="form-control" id="signupEmail" placeholder="Enter email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" class="form-control" id="signupPassword" placeholder="Password" minlength="6" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupName">Name</label>
+                    <input type="text" class="form-control" id="signupName" placeholder="Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupUsername">Username</label>
+                    <input type="text" class="form-control" id="signupUsername" placeholder="Username"  required>
+                </div>
+                    <a href="" data-toggle="modal" data-target="#Login" data-dismiss="modal">Already have an account?</a>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-primary"  value="Register">
+                </div>
+            </form>
+    </div>
+    </div>
+</div>
+ <!--Login Modal-->
+<div class="modal fade" id="Login" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content ">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Login</h5>
+        <button type="button" class="close btn btn-secondary" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" >&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+            <form id="signinForm">
+            <div class="form-group">
+                <label for="signinEmail">Email address</label>
+                <input type="email" class="form-control" id="signinEmail" placeholder="Enter email" required>
+              </div>
+              <div class="form-group">
+                <label for="signinPassword">Password</label>
+                <input type="password" class="form-control" id="signinPassword" placeholder="Password" required>
+              </div>
+              <a href="" data-toggle="modal" data-target="#Register" data-dismiss="modal">Don't have an account?</a>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="Login">
+        </div>
+    </form>
+    </div>
+    </div>
+</div>
+
+<!-- this is comments.html which should display the post details fetched from the selected post in generalpost.html -->
+<section id="app">
+    <div class="container">
+        <div class="h1-container d-flex justify-content-between align-items-center">
+            <h1>{{ post.title }}</h1>
+        </div>
+        <br>
+
+        <!-- Display the selected post details from generalpost1.html -->
+        <div class="card mb-3">
+            <!-- <div class="card-header">
+                Author: {{ post.username }}
+            </div>
+            <div class="card-body">
+              <p class="card-text">{{ post.message }}</p>
+            </div> -->
+
+            <div class="card-body">
+                <h5 class="card-title"> {{ post.username }}</h5>
+                <!-- <h6 class="card-subtitle mb-2 text-body-secondary">{{ post.username }}</h6> -->
+                <p class="card-text">{{ post.message }}</p>
+               
+            </div>
+            
+        </div>
+    
+        <div class="d-flex justify-content-between align-items-center mt-5 mb-2">
+            <h3>Replies:</h3>
+            <button class="btn btn-primary" @click="openCommentModal">Reply</button>
+        </div>
+
+
+        <!-- Display comments related to the selected post -->
+        <!-- <div id="comment-list">
+            <div class="card mb-5" v-for="comment in comments" :key="comment.id">
+                <div class="card-header">
+                    Username: {{ comment.username }}
+                </div>
+                <div class="card-body">
+                  <p class="card-text">{{ comment.comment }}</p>
+                </div>
+                
+            </div>
+        </div> -->
+
+        <div id="comment-list">
+            <div class="card mb-3" v-for="comment in comments" :key="comment.id">
+                <div class="card-body">
+                  <h5 class="card-title">{{ comment.username }}</h5>
+                  <!-- <h6 class="card-subtitle mb-2 text-body-secondary">{{ post.username }}</h6> -->
+                  <p class="card-text">{{ comment.comment }}</p>
+                 
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Create comment modal -->
+        <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Comment</h3>
+                        <button type="button" class="close btn btn-secondary" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form id="commentForm">
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Comment</label>
+                                <textarea class="form-control" id="comment" v-model="commentForm.comment" style="height: 150px; resize: vertical; overflow-y: auto;"></textarea>
+                            </div>
+                            <button type="button" class="btn btn-primary" @click="createComment">Submit Comment</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div> 
+
+    </div>
+
+</section>
+
+<script>
+    // Initialize Firestore
+    const db = firebase.firestore();
+
+    new Vue({
+        el: '#app',
+        data: {
+            post:[],
+            comments: [],
+            commentForm: {
+                comment: '', // Define the 'comment' property within 'commentForm'
+            },
+        },
+        methods: {
+
+            async fetchPostDetails() {
+                // Parse the query parameters from the URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const postId = urlParams.get('postId'); // Get the value of 'postId' from the URL
+
+                if (postId) {
+                    const postRef = db.collection('posts').doc(postId); // Replace 'posts' with your Firestore collection name
+                    const doc = await postRef.get();
+
+                    if (doc.exists) {
+                    this.post = { ...doc.data(), id: doc.id }; // Set the post data
+                    } else {
+                    console.error('Post not found');
+                    }
+                } else {
+                    console.error('Post ID not found in the URL');
+                }
+            },
+            
+            async fetchComments() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const postId = urlParams.get('postId'); // Get the value of 'postId' from the URL
+
+                if (postId) {
+                    // Reference the 'comments' subcollection of a specific post
+                    const commentsRef = db.collection('posts').doc(postId).collection('comments');
+                    const querySnapshot = await commentsRef.get();
+
+                    this.comments = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+                } else {
+                    console.error('Post ID not found in the URL');
+                }
+            },
+
+            openCommentModal() {
+                const user = firebase.auth().currentUser;
+                if (user) {
+                    this.$nextTick(() => {
+                        new bootstrap.Modal(document.getElementById('commentModal')).show();
+                    });
+                } else {
+                    // Handle the case where the user is not authenticated, e.g., show a sign-in prompt
+                    alert("Please sign in to submit a comment.");
+                }
+            },
+
+            async createComment() {
+                const commentData = {
+                    comment: this.commentForm.comment,
+                };
+
+                if (!commentData.comment) {
+                    alert("All fields must be filled!");
+                    return;
+                }
+
+                const user = firebase.auth().currentUser;
+                const postId = this.post.id; // Use this.post.id to get the current post's ID
+
+                if (user) {
+                    user.getIdToken()
+                        .then((token) => {
+                            // Use template literals to embed the postId in the URL
+                            const url = `/api/posts/${postId}/comments`; // Replace with the actual API endpoint
+                            return axios.post(url, { ...commentData, userId: user.uid, username: user.displayName }, {
+                                headers: {
+                                    Authorization: `Bearer ${token}`
+                                }
+                            });
+                        })
+                        .then((response) => {
+                            if (response.data && response.data.error) {
+                                throw new Error(`Server Error: ${response.data.error}`);
+                            }
+                            console.log('Comment Added: ', response);
+                            alert('Comment successfully added!');
+                            // Close the modal here if needed
+                            document.getElementById('commentModal').style.display = 'none';
+                            // After submitting a comment, you may want to refresh the comment list
+                            this.fetchComments(); // Fetch comments again to show the updated list
+                            window.location.reload();
+                        })
+                        .catch((error) => {
+                            console.error('Error adding comment: ', error.message);
+                            alert('Error adding comment.');
+                        });
+                } else {
+                    console.error('User not authenticated');
+                    alert("Please sign in to create a comment.");
+                }
+            },
+        
+
+
+            
+        },
+
+        mounted() {
+            this.fetchPostDetails(); // Call the method when the component is mounted
+            this.fetchComments();
+        },
+        });
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="auth.js"></script>
+
+    <footer>
+        <p>&copy; 2023 HARD CYCLE</p>
+    </footer>
+</body>
+</html>

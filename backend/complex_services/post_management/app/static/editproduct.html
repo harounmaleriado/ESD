@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tech-Exchange</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <script id="replace_with_navbar" src="navbar.js"></script>
+    <form id="editProductForm">
+        <div id="editDetails">
+            <h1>Update Product details</h1>
+      
+            <h4>Name</h4> 
+            <input id="name" type="text"> 
+      
+            <h4>Description</h4> 
+            <input id="desc" type="text"> <br><br>
+
+            <h4><label for="category">Choose a category:</label></h4>
+            <select name="category" id="category">
+            <option value="Computers">Computers</option>
+            <option value="Mobile Phones & Accessories">Mobile Phones & Accessories</option>
+            <option value="Video Gaming">Video Gaming</option>
+            <option value="TV & Home Appliances">TV & Home Appliances</option>
+            <option value="Audio">Audio</option>
+            <option value="Photography">Photography</option>
+            <option value="Others">Others</option>
+            </select><br><br>
+
+            <h4>Collection Location</h4> 
+            <input id="location" type="text"> 
+            <br><br><br>
+      
+            <button id="update">UPDATE</button>
+            <button id="remove">REMOVE</button> <br><br>
+        </div>
+    </form>
+
+    <script src="auth.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, doc, query, where, getDoc, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      // Your Firebase config
+      apiKey: "AIzaSyACeAF5_819WDlV2PM7FEQQ5R2YGGWklCM",
+        authDomain: "techexchange-76048.firebaseapp.com",
+        databaseURL: "https://techexchange-76048-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "techexchange-76048",
+        storageBucket: "techexchange-76048.appspot.com",
+        messagingSenderId: "396217100321",
+        appId: "1:396217100321:web:ba771f3033a2caf6ec1b60",
+        measurementId: "G-51BT4968FL"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    // const storage = getStorage(app);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('productId');
+    const docRef = null;
+
+    function formatTimestamp(timestamp) {
+      const date = new Date(timestamp.seconds * 1000);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    async function getUserDocument() {
+  const userDocRef = doc(db, "users", "eke7zjaf5hJFJkleq6jQ");
+  const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+    const postsQuery = query(collection(db, "post"), where("user_id", "==", "eke7zjaf5hJFJkleq6jQ"));
+    const querySnapshot = await getDocs(postsQuery);
+
+    querySnapshot.forEach(async (postDoc) => {
+        console.log('result', postDoc.id)
+        const docRef = doc(db, "post" , postDoc.id);
+        const docSnap = await getDoc(docRef);
+        const postData = postDoc.data();
+        if (postDoc.exists() && postDoc.id == productId){
+            const locationString = `Latitude: ${postData.location.latitude}, Longitude: ${postData.location.longitude}`;
+
+            document.getElementById("name").value = postData.name;
+            document.getElementById("desc").value = postData.desc;
+            const categorySelect = document.getElementById("category");
+        for (let option of categorySelect.options) {
+            if (option.value === postData.category) {
+                option.selected = true;
+                break;
+            }
+        }
+            document.getElementById("location").value = locationString;
+        }
+    
+    })
+    
+} else {
+    console.log("No such document!");
+}
+
+}
+getUserDocument();
+
+document.getElementById("update").addEventListener("click", async (event) => {
+    event.preventDefault();  // Prevent the default form submit action
+
+    const newName = document.getElementById("name").value;
+    const newDesc = document.getElementById("desc").value;
+    const newCategory = document.getElementById("category").value;
+    const newLocation = document.getElementById("location").value;
+
+    const userDocRef = doc(db, "users", "eke7zjaf5hJFJkleq6jQ");
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+    const postsQuery = query(collection(db, "post"), where("user_id", "==", "eke7zjaf5hJFJkleq6jQ"));
+    const querySnapshot = await getDocs(postsQuery);
+
+    querySnapshot.forEach(async (postDoc) => {
+        // console.log('result', postDoc.id)
+        const docRef = doc(db, "post" , postDoc.id);
+        const docSnap = await getDoc(docRef);
+        const postData = postDoc.data();
+        // Check if docRef is defined inside this scope or make sure it's accessible
+    if (!docRef) {
+        console.error('Document reference is not defined.');
+        return;
+    }
+
+    try {
+        await updateDoc(docRef, {
+            name: newName,
+            desc: newDesc,
+            category: newCategory,
+            location: newLocation
+        });
+        alert("Product updated successfully!");
+        // Optionally, redirect or refresh the page to reflect the updates
+        // window.location.href = "your_redirection_url_or_same_page";
+    } catch (error) {
+        console.error("Error updating document:", error);
+        alert("Error updating product. Please try again.");
+    }
+});
+    }})
+
+    document.getElementById("remove").addEventListener("click", async (event) => {
+    event.preventDefault();  // Prevent the default form submit action
+
+    if (confirm("Are you sure you want to delete this product?")) {
+        try {
+            if (!productId) {
+                console.error('Product ID is not defined.');
+                return;
+            }
+
+            const docRef = doc(db, "post", productId);  // Direct reference to the document
+
+            await deleteDoc(docRef);
+            alert("Product deleted successfully!");
+            window.location.href = "mylistings.html"; // Redirect to mylistings.html
+        } catch (error) {
+            console.error("Error deleting document:", error);
+            alert("Error deleting product. Please try again.");
+        }
+    }
+});
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Product Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.22.1/dist/algoliasearch.umd.js"></script>
+</head>
+<body>
+    <script id="replace_with_navbar" src="navbar.js"></script>
+    <h1 id="searchResultHeader"> Search results for '' </h1> <br>
+    <div id="productDetails" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, connectFirestoreEmulator, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+
+     // Your web app's Firebase configuration
+     const firebaseConfig = {
+        apiKey: "AIzaSyACeAF5_819WDlV2PM7FEQQ5R2YGGWklCM",
+        authDomain: "techexchange-76048.firebaseapp.com",
+        databaseURL: "https://techexchange-76048-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "techexchange-76048",
+        storageBucket: "techexchange-76048.appspot.com",
+        messagingSenderId: "396217100321",
+        appId: "1:396217100321:web:ba771f3033a2caf6ec1b60",
+        measurementId: "G-51BT4968FL"
+      };
+
+      function formatTimestamp(timestamp) {
+    let date;
+    if (timestamp.toDate) {
+        // If it's a Firestore Timestamp
+        date = timestamp.toDate();
+    } else if (typeof timestamp === 'string') {
+        // If the date is a string
+        date = new Date(timestamp);
+    } else {
+        // If it's already a Date object
+        date = timestamp;
+    }
+
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+const client = algoliasearch('60IC04XR8A', '3b334f990956ade50fd2618975c1f586');
+const index = client.initIndex('search_posts');
+
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get('product');
+  console.log(productId);
+  
+  // Initialize Algolia client
+  const client = algoliasearch('60IC04XR8A', '3b334f990956ade50fd2618975c1f586');
+  const index = client.initIndex('search_posts');
+  
+  // Fetch the product details from Algolia
+  index.getObject(productId).then(async (hit) => {
+    console.log("Product details fetched:", hit);
+    const productDetailsElement = document.getElementById('productDetails');
+    const imgUrl = await getDownloadURL(storageRef(storage, `gs://techexchange-76048.appspot.com/${hit.name}.png`));
+    document.getElementById('searchResultHeader').textContent = `Search results for '${hit.name}'`;
+    
+    let formattedDate = '';
+    if (hit.datetime) {
+      // Assuming datetime is stored as a string or timestamp
+      const date = new Date(hit.datetime);
+      formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+    }
+
+    productDetailsElement.innerHTML = `
+      <div class="col">
+        <div class="card shadow-sm">
+          <img src="${imgUrl}" class="d-block w-100" alt="${hit.name}">
+          <div class="card-body">
+            <h5 class="card-title">${hit.name}</h5>
+            <p class="card-subtitle">$${hit.price}</p>
+            <p class="card-text">${hit.desc}</p>
+            <p class="card-text">Location: ${hit.location.latitude}, ${hit.location.longitude}</p>
+            <p class="card-text">Posted on: ${formattedDate}</p>
+            <p class="card-text">Category: ${hit.category}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <small class="text-muted">${formattedDate}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).catch((error) => {
+    console.error('Error fetching product details:', error);
+  });
+});
+
+  </script>
+</body>
+</html>
