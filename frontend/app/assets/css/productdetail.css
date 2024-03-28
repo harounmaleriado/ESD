@@ -1,0 +1,52 @@
+html, body {
+    min-height: 100%;
+}
+
+body {
+    padding-top: 80px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Set the minimum height of the body to 100% of the viewport height */
+}
+
+.container {
+    flex: 1; /* Use flex property to push the footer down to the bottom */
+}
+
+footer {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    text-align: center;
+
+}
+
+/* Normal state of the button */
+.btn-primary {
+    background: linear-gradient(92.88deg, #455EB5 9.16%, #455EB5 9.16%, #455EB5 9.16%); /* Correct gradient syntax */
+    border: 1px solid transparent; /* Transparent border */
+    color: white; /* White text */
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out; /* Transition for solid colors */
+}
+
+/* Hover state of the button */
+.btn-primary:hover {
+    background: linear-gradient(92.88deg, #455EB5 9.16%, #455EB5 9.16%, #455EB5 9.16%); /* Different gradient on hover */
+    border-color: #455EB5; /* Solid border color on hover */
+}
+
+
+.btn-outline-primary {
+    background: white; /* Correct gradient syntax */
+    border: 1px solid transparent; /* Transparent border */
+    color: white; /* White text */
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out; /* Transition for solid colors */
+}
+
+.btn-outline-primary:hover {
+    background: linear-gradient(92.88deg, #455EB5 9.16%, #455EB5 9.16%, #455EB5 9.16%); /* Different gradient on hover */
+    border-color: #455EB5; /* Solid border color on hover */
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+
+

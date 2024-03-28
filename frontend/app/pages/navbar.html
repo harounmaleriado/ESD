@@ -1,0 +1,100 @@
+
+<link rel="stylesheet" href="../css/navbar.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+ <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">Tech-Exchange</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/pages/compare.html">Compare</a>
+                      </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/pages/forum.html">Forum</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/pages/profile.html">Profile</a>
+                        </li>
+                    </ul>
+                    <div class="ms-auto">
+                      <button class="btn btn-primary" type="button" onclick="location.href='/pages/addPost.html'">New Listing</button>
+                  </div>
+                </div>
+            </div>
+        </nav>
+      <br><br>
+
+        <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+       import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+
+       // Your web app's Firebase configuration
+       const firebaseConfig = {
+        apiKey: "AIzaSyACeAF5_819WDlV2PM7FEQQ5R2YGGWklCM",
+        authDomain: "techexchange-76048.firebaseapp.com",
+        databaseURL: "https://techexchange-76048-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "techexchange-76048",
+        storageBucket: "techexchange-76048.appspot.com",
+        messagingSenderId: "396217100321",
+        appId: "1:396217100321:web:ba771f3033a2caf6ec1b60",
+        measurementId: "G-51BT4968FL"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const storage = getStorage(app);
+
+      document.addEventListener('DOMContentLoaded', async () => {
+  const params = new URLSearchParams(window.location.search);
+  const searchTerm = params.get('search');
+
+  if (searchTerm) {
+    const itemsContainer = document.getElementById('searchResultsContainer'); // Ensure this is the ID of your results container
+    itemsContainer.innerHTML = '';
+
+    const db = getFirestore();
+    const productsQuery = query(collection(db, "post"), where("name", "array-contains", searchTerm));
+    const querySnapshot = await getDocs(productsQuery);
+
+    querySnapshot.forEach(doc => {
+      const data = doc.data();
+      const imageRef = storageRef(storage, `gs://techexchange-76048.appspot.com/${data.name}.png`);
+      const imgUrl = await getDownloadURL(imageRef);
+      const formattedDate = data.datetime.toDate().toLocaleDateString("en-GB") + ' ' + data.datetime.toDate().toLocaleTimeString("en-GB");
+
+      const cardHtml = `
+        <div class="col">
+          <div class="card shadow-sm">
+            <img src="${imgUrl}" class="d-block w-100" alt="${data.name}">
+            <div class="card-body">
+              <h5 class="card-title">${data.name}</h5>
+              <p class="card-subtitle">$${data.price}</p>
+              <p class="card-text">${data.desc}</p>
+              <p class="card-text">Location: ${data.location.latitude}, ${data.location.longitude}</p>
+              <p class="card-text">Posted on: ${formattedDate}</p>
+              <p class="card-text">Category: ${data.category}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">${formattedDate}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      itemsContainer.innerHTML += cardHtml;
+    });
+  }
+});
+
+
+    </script>
