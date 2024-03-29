@@ -14,6 +14,12 @@
 - **get review** : GET /review/<id>
 - **get all reviews** : GET /reviews
 
+## listings
+- **add listing** : POST /listings
+- **get listing** : GET /users/<user_id>/listings
+- **compare listings** : POST /compare
+- **get all listings** : GET /listings 
+
 
 # How to run in Docker
 ## Build the images
