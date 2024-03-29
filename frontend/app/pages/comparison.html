@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hardware Comparison</title>
+    <title>Item Comparison</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,27 +13,11 @@
         h1 {
             color: #333;
         }
-        input[type="text"] {
+        select, button {
             padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            display: block;
+            margin-top: 10px;
             width: 100%;
-        }
-        button {
-            background-color: #4c6baf;
-            color: white;
-            padding: 14px 20px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #4c5eaf;
+            box-sizing: border-box; /* Ensures padding doesn't affect width */
         }
         #comparisonResult {
             background-color: #fff;
@@ -42,36 +26,103 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+        .card-container {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+    .card {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 45%; /* Each card takes up almost half of the container width */
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .card h3 {
+        color: #333;
+        margin-top: 0;
+    }
     </style>
 </head>
 <body>
-    <h1>Compare Hardware</h1>
-    <input type="text" id="hardware1" placeholder="Enter first hardware ID">
-    <input type="text" id="hardware2" placeholder="Enter second hardware ID">
-    <button onclick="compareHardware()">Compare</button>
+    <h1>Compare Items</h1>
+    <select id="item1">
+        <option value="">Select First Item</option>
+        <!-- Options will be populated here -->
+    </select>
+    <select id="item2">
+        <option value="">Select Second Item</option>
+        <!-- Options will be populated here -->
+    </select>
+    <button onclick="compareItems()">Compare</button>
 
     <div id="comparisonResult"></div>
 
     <script>
-        function compareHardware() {
-            const hardware1 = document.getElementById('hardware1').value;
-            const hardware2 = document.getElementById('hardware2').value;
-            
-            fetch('/compare', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ hardware1, hardware2 }),
-            })
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchItems();
+        });
+
+        function fetchItems() {
+            fetch('http://localhost:5001/listings') // Adjust this URL to your dataservice endpoint
             .then(response => response.json())
-            .then(data => {
-                document.getElementById('comparisonResult').innerText = JSON.stringify(data, null, 2);
+            .then(items => {
+                const dropdown1 = document.getElementById('item1');
+                const dropdown2 = document.getElementById('item2');
+                items.forEach(item => {
+                    const option1 = new Option(item.name, item.id);
+                    const option2 = new Option(item.name, item.id);
+                    dropdown1.add(option1);
+                    dropdown2.add(option2);
+                });
             })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+            .catch(error => console.error('Error loading items:', error));
         }
+        
+        function compareItems() {
+    const item1Id = document.getElementById('item1').value; // Get the selected ID from the first dropdown
+    const item2Id = document.getElementById('item2').value; // Get the selected ID from the second dropdown
+
+    if (!item1Id || !item2Id) {
+        // Handle the case where one or both dropdowns don't have an item selected
+        document.getElementById('comparisonResult').innerHTML = `<p>Please select two items to compare.</p>`;
+        return; // Exit the function early
+    }
+
+    // Assuming your backend expects item IDs in an object with product_id_1 and product_id_2
+    fetch('http://localhost:5001/compare', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ product_id_1: item1Id, product_id_2: item2Id }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('comparisonResult');
+        container.innerHTML = ''; // Clear previous results
+        container.className = 'card-container'; // Apply styling to the container
+
+        // Access each listing from the data object
+        const listings = [data.listing_1, data.listing_2];
+        listings.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <h3>${item.name}</h3>
+                <p>${item.desc}</p>
+                <p><strong>Price:</strong> $${item.price}</p>
+            `;
+            container.appendChild(card);
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('comparisonResult').innerHTML = `<p>Error fetching comparison data.</p>`;
+    });
+}
+
     </script>
 </body>
 </html>
