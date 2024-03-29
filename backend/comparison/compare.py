@@ -5,7 +5,7 @@ from flask import Flask, jsonify
 app = Flask(__name__)
 
 # Initialize Firebase Admin
-cred = credentials.Certificate('path/to/your/firebase_credentials.json')
+cred = credentials.Certificate('/firebase_credentials.json')
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
