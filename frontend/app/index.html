@@ -56,8 +56,13 @@
                         </a>
                     </div>
                     <div class="carousel-item">
+<<<<<<< Updated upstream
                         <a href="marketplace.html">
                             <img src="/assets/images/3.png" class="d-block w-100" alt="Discuss and Collaborate">
+=======
+                        <a href="./pages/compare.html">
+                            <img src="/assets/images/3.png" class="d-block w-100" alt="Compare Products">
+>>>>>>> Stashed changes
                         </a>
                     </div>
                 </div>
@@ -182,8 +187,6 @@
         const storage = getStorage(app);
         const client = algoliasearch('60IC04XR8A', '3b334f990956ade50fd2618975c1f586');
         const index = client.initIndex('search_posts');
-
-        // connectFirestoreEmulator(db, '127.0.0.1', 8080);
 
         let isShowingCheapestFirst = true;
 
