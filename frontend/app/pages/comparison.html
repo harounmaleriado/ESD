@@ -65,7 +65,7 @@
         });
 
         function fetchItems() {
-            fetch('http://localhost:5001/list-items') // Adjust this URL to your dataservice endpoint
+            fetch('http://localhost:5001/listings') // Adjust this URL to your dataservice endpoint
             .then(response => response.json())
             .then(items => {
                 const dropdown1 = document.getElementById('item1');
@@ -79,41 +79,49 @@
             })
             .catch(error => console.error('Error loading items:', error));
         }
-// Previous JavaScript code...
-
-function compareItems() {
-        const item1 = document.getElementById('item1').value;
-        const item2 = document.getElementById('item2').value;
         
-        fetch('http://localhost:5000/compare-items', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ item_ids: [item1, item2] }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            const container = document.getElementById('comparisonResult');
-            container.innerHTML = ''; // Clear previous results
-            container.className = 'card-container'; // Set the container class for styling
+        function compareItems() {
+    const item1Id = document.getElementById('item1').value; // Get the selected ID from the first dropdown
+    const item2Id = document.getElementById('item2').value; // Get the selected ID from the second dropdown
 
-            // Create a card for each item
-            Object.values(data).forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <h3>${item.name}</h3>
-                    <p>${item.description}</p>
-                `;
-                container.appendChild(card);
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('comparisonResult').innerHTML = `<p>Error fetching comparison data.</p>`;
-        });
+    if (!item1Id || !item2Id) {
+        // Handle the case where one or both dropdowns don't have an item selected
+        document.getElementById('comparisonResult').innerHTML = `<p>Please select two items to compare.</p>`;
+        return; // Exit the function early
     }
+
+    // Assuming your backend expects item IDs in an object with product_id_1 and product_id_2
+    fetch('http://localhost:5001/compare', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ product_id_1: item1Id, product_id_2: item2Id }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('comparisonResult');
+        container.innerHTML = ''; // Clear previous results
+        container.className = 'card-container'; // Apply styling to the container
+
+        // Access each listing from the data object
+        const listings = [data.listing_1, data.listing_2];
+        listings.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <h3>${item.name}</h3>
+                <p>${item.desc}</p>
+                <p><strong>Price:</strong> $${item.price}</p>
+            `;
+            container.appendChild(card);
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('comparisonResult').innerHTML = `<p>Error fetching comparison data.</p>`;
+    });
+}
 
     </script>
 </body>
