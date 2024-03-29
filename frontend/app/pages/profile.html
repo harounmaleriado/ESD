@@ -42,9 +42,9 @@
             <!-- User Profile Section -->
             <div class="col-md-2 border-end">
                 <div class="profile-section">
-                    <img src="../assets/profilepicture.png" class="img-fluid rounded-circle mb-3" width="70"
-                        height="70">
-                    <h3>Tom</h3>
+                    <img id="profilePicture" src="../assets/profilepicture.png" class="img-fluid rounded-circle mb-3"
+                        width="70" height="70">
+                    <h3 id="userName">Name goes here....</h3>
                     <p id="bio">Bio goes here....</p>
                     <p id="contact">Contact details go here...</p>
                     <p id="email">Email goes here...</p>
@@ -124,11 +124,11 @@
 
             // Function to update profile information on the page
             function updateProfile(profileData) {
-                document.querySelector('.profile-section h3').textContent = profileData.name;
-                document.querySelector('.profile-section img').src = profileData.profile_pic;
-                document.getElementById('bio').textContent = profileData.bio;
-                document.getElementById('contact').textContent = profileData.contact_details;
-                document.getElementById('email').textContent = profileData.email;
+                document.getElementById('userName').textContent = profileData.name || 'Default Name';
+                document.getElementById('profilePicture').src = profileData.profile_pic || '../assets/defaultProfilePic.png';
+                document.getElementById('bio').textContent = profileData.bio || 'No bio available.';
+                document.getElementById('contact').textContent = profileData.contact_details || 'No contact details available.';
+                document.getElementById('email').textContent = profileData.email || 'No email available.';
             }
             async function updateProfileInfo() {
                 if (!globalUserId) {
@@ -199,7 +199,7 @@
                     return reviewerData.name;
                 } catch (error) {
                     console.error('Failed to fetch reviewer name:', error);
-                    return 'Unknown'; 
+                    return 'Unknown';
                 }
             }
 
@@ -220,6 +220,39 @@
                 });
             }
 
+            async function fetchListings(userId) {
+                try {
+                    const response = await fetch(`http://localhost:8000/listings/${userId}`);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const listings = await response.json();
+                    displayListings(listings); // Assuming the API returns an object with a listings array
+                } catch (error) {
+                    console.error('Failed to fetch listings:', error);
+                }
+            }
+
+            function displayListings(listings) {
+                const listingsContainer = document.getElementById('listings');
+                // Clear previous content
+                listingsContainer.innerHTML = '<h4>Your Listings</h4>';
+                if (listings && Array.isArray(listings)) {
+                    listings.forEach(listing => {
+                        const listingElement = document.createElement('div');
+                        listingElement.classList.add('listing');
+                        listingElement.innerHTML = `
+                <p><strong>Name:</strong> ${listing.name}</p>
+                <p><strong>Description:</strong> ${listing.desc}</p>
+                <p><strong>Category:</strong> ${listing.category.join(', ')}</p> 
+                <p><strong>Price:</strong> $${listing.price}</p>
+            `;
+                        listingsContainer.appendChild(listingElement);
+                    });
+                } else {
+                    listingsContainer.innerHTML += '<p>No listings found or invalid data format.</p>';
+                }
+            }
 
 
             // Check for JWT and fetch profile
@@ -235,6 +268,7 @@
 
                 fetchProfile(globalUserId);
                 fetchReviews(globalUserId);
+                fetchListings(globalUserId);
             });
         </script>
 

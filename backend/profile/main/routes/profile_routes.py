@@ -19,7 +19,7 @@ def update_profile(user_id):
         print(f"Profile pic URL: {profile_pic_url}")
         # Update profile with new data
         profile_data = {
-            'user_id': user_id,  # Ensure consistency in data type
+            'user_id': user_id,  
             'name': data.get('name', existing_profile.name),
             'email': data.get('email', existing_profile.email),
             'contact_details': data.get('contact_details', existing_profile.contact_details),

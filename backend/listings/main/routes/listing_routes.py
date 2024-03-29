@@ -25,7 +25,7 @@ def add_listing():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@listing_bp.route('/users/<user_id>/listings', methods=['GET'])
+@listing_bp.route('/listings/<int:user_id>', methods=['GET'])
 def get_listings(user_id):
     """
     Retrieve all listings for a specific user.

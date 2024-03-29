@@ -94,6 +94,13 @@ services:
       - review-mysql
     networks:
       - kong-net
+  
+  listing-service:
+    image: tshaun/listing:1.2
+    depends_on:
+      - rabbitmq
+    networks:
+      - kong-net
 
   amqp-setup:
     image: tshaun/amqp_setup:1.0
