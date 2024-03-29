@@ -55,3 +55,25 @@ footer {
     text-align: center;
     margin-top: 20px;
 }
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #f44336; /* Red for error */
+    color: white;
+    padding: 20px;
+    z-index: 1000;
+    transition: opacity 0.5s;
+}
+
+.notification.warning {
+    background-color: #ff9800; /* Orange for warning */
+}
+
+.loading-bar {
+    background-color: #4CAF50; /* Green for progress */
+    height: 5px;
+    width: 0%;
+    transition: width 0.5s;
+}

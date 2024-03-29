@@ -83,10 +83,20 @@
       document.getElementById("insert").addEventListener("click", async (event) => {
     event.preventDefault();
 
+    const nameValue = document.getElementById("name").value.trim();
+    const priceValue = document.getElementById("price").value.trim();
     const city = document.getElementById("city").value;
+    const imageFile = document.getElementById("imageUpload").files[0];
 
-    if (!city) {
-        alert("Please enter a city name.");
+    if (!nameValue || !priceValue || !city || !imageFile) {
+        let missingFields = [];
+        if (!nameValue) missingFields.push("Name");
+        if (!priceValue) missingFields.push("Price");
+        if (!city) missingFields.push("Collection Location");
+        if (!imageFile) missingFields.push("Image");
+
+        // Show a warning notification listing all missing required fields
+        showNotification(`Please fill out the following fields: <br> ${missingFields.join(", ")}`, "warning");
         return;
     }
 
@@ -104,7 +114,7 @@
             const nameValue = document.getElementById("name").value;
             const descValue = document.getElementById("desc").value;
             const categoryValue = [document.getElementById("category").value];
-            const priceValue = document.getElementById("price").value;
+            const priceValue = parseFloat(document.getElementById("price").value);
             const dateTime = new Date();
 
             const postData = {
@@ -129,6 +139,42 @@
     }
 });
 
+function showNotification(message, type) {
+    const notification = document.createElement("div");
+    notification.style.position = 'fixed';
+    notification.style.top = '5%';  
+    notification.style.left = '50%';
+    notification.style.transform = 'translateX(-50%)';
+    notification.style.backgroundColor = type === 'warning' ? '#ff9800' : '#f44336';
+    notification.style.color = 'white';
+    notification.style.padding = '20px';
+    notification.style.zIndex = '1000';
+    notification.style.width = 'auto';
+    notification.style.minWidth = '300px';  
+    notification.style.textAlign = 'center';
+    notification.style.boxSizing = 'border-box';
+    notification.style.borderRadius = '5px';
+    notification.innerHTML = `<p style="font-size: 20px;">${message}</p> <div class="loading-bar" style="width: 0%; height: 5px; background-color: #4CAF50; margin-top: 10px;"></div>`;
+
+    document.body.appendChild(notification);
+
+    // Animate the loading bar and extend the duration
+    const loadingBar = notification.querySelector(".loading-bar");
+    let width = 0;
+    const interval = setInterval(() => {
+        if (width >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            }, 5000); 
+        } else {
+            width++;
+            loadingBar.style.width = width + '%';
+        }
+    }, 50); 
+}
+
 
 document.getElementById("uploadButton").addEventListener("click", async () => {
     const imageFile = document.getElementById("imageUpload").files[0];
@@ -137,8 +183,18 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
         return;
     }
 
-    const imageName = imageFile.name;  // Use the file's original name
-    const storageRef = ref(storage, imageName);
+    // Get the product name and sanitize it to create a valid file name
+    const nameValue = document.getElementById("name").value.trim();
+    if (!nameValue) {
+        alert("Please enter the product name before uploading the image.");
+        return;
+    }
+    const sanitizedFileName = nameValue.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+
+    // Append the file extension from the original file name
+    const extension = imageFile.name.split('.').pop();
+    const imageName = `${sanitizedFileName}.${extension}`;
+    const storageRef = ref(storage, imageName); // Store at the root level
 
     try {
         const snapshot = await uploadBytes(storageRef, imageFile);
@@ -147,13 +203,13 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
         // Get the download URL and do something with it (e.g., save it in Firestore)
         const downloadURL = await getDownloadURL(snapshot.ref);
         console.log('File available at', downloadURL);
-        // Optionally, you can save the downloadURL along with post data in Firestore
         alert('Image uploaded successfully!');
     } catch (error) {
         console.error('Upload failed', error);
         alert('Upload failed: ' + error.message);
     }
 });
+
 
 
 </script>
