@@ -14,8 +14,8 @@ bucket = storage.bucket('techexchange-76048.appspot.com')
 
 class Listing:
     def __init__(self, category, datetime, desc, latitude, longitude, name, price, user_id):
-            self.category = category  # This should be a list to reflect an array in Firebase
-            self.datetime = datetime  # This can be a string or a datetime object
+            self.category = category 
+            self.datetime = datetime  
             self.desc = desc
             self.location = {
                 'latitude': latitude,
@@ -23,9 +23,9 @@ class Listing:
             }
             self.name = name
             self.price = price
-            self.user_id = user_id  # Link to the user profile
+            self.user_id = user_id
 
-    def save(self):
+    def save(self, image_files=None):
         # Convert datetime to a Firestore-compatible format if it's a datetime object
         if isinstance(self.datetime, datetime):
             self.datetime = self.datetime.isoformat()
@@ -37,10 +37,20 @@ class Listing:
             'location': self.location,
             'name': self.name,
             'price': self.price,
-            'user_Id': self.user_id
+            'user_Id': self.user_id,
+            'images': []
         }
         # Add a new document in collection "listings" with the listing data
-        db.collection('post').add(listing_data)
+        doc_ref = db.collection('post').add(listing_data)[1]
+    
+        if image_files:
+            for image in image_files:
+                blob = bucket.blob(f'listings/{doc_ref.id}/{image.filename}')
+                blob.upload_from_file(image, content_type=image.content_type)
+                listing_data['images'].append(blob.public_url)
+
+            # Update the document with the URLs of the images
+            doc_ref.update({'images': listing_data['images']})
     
     @staticmethod
     def serialize_geo_point(listing):

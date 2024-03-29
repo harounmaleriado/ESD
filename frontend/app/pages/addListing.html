@@ -37,6 +37,12 @@
         <input id="city" type="text" placeholder="Enter city">
         <br><br><br>
 
+        <h4>Upload Image(s)</h4>
+        <!-- Allow multiple files to be selected -->
+        <input id="images" type="file" multiple>
+        <br><br>
+
+
         <button id="insert">INSERT</button>
     </div>
 
@@ -71,6 +77,7 @@
             const category = [document.getElementById('category').value];
             const price = document.getElementById('price').value;
             const city = document.getElementById('city').value;
+            const images = document.getElementById('images').files;
             
             const jwtToken = localStorage.getItem('jwt_token'); // Retrieve the JWT token from local storage
             if (!jwtToken) {
@@ -99,29 +106,28 @@
                 const geoData = await geoResponse.json();
                 const latitude = geoData.results[0].geometry.lat;
                 const longitude = geoData.results[0].geometry.lng;
+                
+                const formData = new FormData(); // Use FormData to handle file uploads
+                formData.append('name', name);
+                formData.append('desc', description);
+                formData.append('category', category);
+                formData.append('price', price);
+                formData.append('datetime', new Date().toISOString());
+                formData.append('latitude', latitude);
+                formData.append('longitude', longitude);
+                formData.append('user_id', user_id);
 
-                // Continue with the original listing data now including latitude and longitude
-                const datetime = new Date().toISOString(); // Example to generate ISO format datetime
-                const listingData = {
-                    name,
-                    desc: description,
-                    category,
-                    price,
-                    datetime,
-                    location: {
-                        latitude,
-                        longitude
-                    },
-                    user_id
-                };
+                // Append images to formData
+                for (let i = 0; i < images.length; i++) {
+                    formData.append('images', images[i]);
+                }
 
                 const response = await fetch('http://localhost:8000/listings', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'Authorization': `Bearer ${jwtToken}`
                     },
-                    body: JSON.stringify(listingData)
+                    body: formData
                 });
 
                 if (!response.ok) {
@@ -131,7 +137,7 @@
                 const responseData = await response.json();
                 console.log('Listing added successfully:', responseData);
                 alert("Listing added successfully!");
-                // Optionally, redirect user or clear form
+                window.location.href = "/";
             } catch (error) {
                 console.error('Error:', error);
                 alert("Error adding listing. Please try again.");

@@ -96,7 +96,7 @@ services:
       - kong-net
   
   listing-service:
-    image: tshaun/listing:1.2
+    image: tshaun/listing:1.4
     depends_on:
       - rabbitmq
     networks:
