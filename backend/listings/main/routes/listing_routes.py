@@ -17,7 +17,7 @@ def add_listing():
         longitude = request.form.get('longitude')
         name = request.form.get('name')
         price = request.form.get('price')
-        user_id = request.form.get('user_id')
+        user_id = int(request.form.get('user_id'))
 
         category = [category] 
 
