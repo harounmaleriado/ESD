@@ -257,47 +257,61 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+            const userAuthSection = document.getElementById('userAuthSection');
 
+            // Check if JWT token exists in local storage
+            const token = localStorage.getItem('jwt_token');
+            console.log('Token:', token);   
+            if (token) {
+                // Decode the token to extract user ID - simplified for demonstration
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
 
+                const { sub: userId } = JSON.parse(jsonPayload);
+                console.log('User ID:', userId);
 
-        // document.addEventListener('DOMContentLoaded', () => {
-        //     const searchInput = document.getElementById('searchInput');
-        //     console.log("searchInput element:", searchInput);
-        //     const suggestionsPanel = document.getElementById('searchResults');
+                // Fetch user profile
+                fetch(`http://localhost:8000/profile/${userId}`, { // Adjusted endpoint
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data && data.name) {
+                        userAuthSection.innerHTML = `<span>Welcome, ${data.name}! <button id="logoutButton" class="btn btn-light">Logout</button></span>`;
+                        document.getElementById('logoutButton').addEventListener('click', logoutUser);
+                    } else {
+                        showAuthButtons();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user profile:', error);
+                    showAuthButtons();
+                });
+            } else {
+                showAuthButtons();
+            }
 
-        //     const client = algoliasearch('60IC04XR8A', '3b334f990956ade50fd2618975c1f586');
-        //     const index = client.initIndex('search_posts');
+            function showAuthButtons() {
+                userAuthSection.innerHTML = `
+                    <a class="nav-link" href="/pages/register.html">Register</a>
+                    <a class="nav-link" href="/pages/login.html">Login</a>
+                `;
+            }
+            function logoutUser() {
+                // Remove JWT token from local storage
+                localStorage.removeItem('jwt_token');
 
-        //     console.log("Event listener attached");
-        //     searchInput.addEventListener('input', () => {
-        //         console.log("Input event triggered");
-        //         const query = searchInput.value.trim();
-
-        //         if (query.length > 0) {
-        //             index.search(query).then(({ hits }) => {
-        //                 console.log("Search executed");
-        //                 console.log("Hits:", hits);
-        //                 suggestionsPanel.innerHTML = ''; // Clear previous suggestions
-        //                 suggestionsPanel.style.display = hits.length > 0 ? 'block' : 'none'; // Show or hide the panel
-
-        //                 hits.forEach(hit => {
-        //                     const suggestionElement = document.createElement('div');
-        //                     suggestionElement.textContent = hit.name; // Use textContent for text to prevent HTML injection
-        //                     suggestionElement.classList.add('suggestion');
-        //                     suggestionElement.addEventListener('click', () => {
-        //                         console.log(`Redirecting to product details for ${hit.objectID}`);
-        //                         window.location.href = `pages/productDetails.html?product=${hit.objectID}`;
-        //                     });
-        //                     suggestionsPanel.appendChild(suggestionElement);
-        //                 });
-        //             });
-        //         } else {
-        //             suggestionsPanel.innerHTML = '';
-        //             suggestionsPanel.style.display = 'none'; // Hide the panel if the query is empty
-        //         }
-        //     });
-        // });
-
+                // Redirect user to the homepage or login page
+                window.location.href = '/pages/login.html'; // Adjust the URL as necessary
+            }
+        });
         // Listen for the enter key or search button click to navigate to product details
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {

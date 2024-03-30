@@ -2,17 +2,23 @@
 ## authentication
 - **create user** : POST /register
 - **login** : POST /login
-- **get user**  : GET /user/<id>
+- **get user**  : GET /user/<int:user_id>
 - **get all users**  : GET /users
 
 ## profile
-- **read profile** : GET /profile/<id>
-- **update profile** : PUT /profile/<id>
+- **read profile** : GET /profile/<int:user_id>
+- **update profile** : PUT /profile/<int:user_id>
 
 ## review
 - **create review** : POST /reviews
-- **get review** : GET /review/<id>
+- **get review** : GET /review/<int:user_id>
 - **get all reviews** : GET /reviews
+
+## listings
+- **add listing** : POST /listings
+- **get listing** : GET /listings/<int:user_id>
+- **compare listings** : POST /compare
+- **get all listings** : GET /listings 
 
 
 # How to run in Docker
@@ -26,7 +32,11 @@
 7. `cd backend/review`
 8. `docker build -t <dockername>/review:1.0 ./`
 9. Ensure you are in backend root and run `docker build -t <dockername>/amqp_setup:1.0 ./`
-10. Change the compose.yaml file in the backend root folder to update image name to yours.
+10. `cd backend/listings`
+11. `docker build -t <dockername>/listing:1.0 ./`
+12. `cd backend/listings`
+13. `docker build -t <dockername>/search:1.0 ./`
+14. Change the compose.yaml file in the backend root folder to update image name to yours.
 ## Run docker compose
 Make sure you are in /backend folder
 1. `docker compose up`
@@ -38,5 +48,6 @@ Make sure you are in /backend folder
 2. `docker pull tshaun/auth:1.8`
 3. `docker pull tshaun/review:1.3`
 4. `docker pull tshaun/amqp_setup:1.0`
+5. `docker pull tshaun/listing:1.4`
 5. `docker compose up`
-6. Remember to docker compose up kong as well see step 1 and 2 under "build the images"
+6. Remember to docker compose up kong as well see step 1 and 2 under **"Build the images"**

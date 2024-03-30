@@ -189,7 +189,7 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
         alert("Please enter the product name before uploading the image.");
         return;
     }
-    const sanitizedFileName = nameValue.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+    const sanitizedFileName = nameValue.replace(/\s+/g, ' ').replace(/[^a-zA-Z0-9_]/g, ' ');
 
     // Append the file extension from the original file name
     const extension = imageFile.name.split('.').pop();
