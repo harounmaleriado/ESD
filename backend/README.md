@@ -2,16 +2,16 @@
 ## authentication
 - **create user** : POST /register
 - **login** : POST /login
-- **get user**  : GET /user/<id>
+- **get user**  : GET /user/<int:user_id>
 - **get all users**  : GET /users
 
 ## profile
-- **read profile** : GET /profile/<id>
-- **update profile** : PUT /profile/<id>
+- **read profile** : GET /profile/<int:user_id>
+- **update profile** : PUT /profile/<int:user_id>
 
 ## review
 - **create review** : POST /reviews
-- **get review** : GET /review/<id>
+- **get review** : GET /review/<int:user_id>
 - **get all reviews** : GET /reviews
 
 ## listings
