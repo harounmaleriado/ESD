@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<form id="payment-form">
+    <div id="card-element">
+        <!-- Stripe.js will inject the Card Element here -->
+    </div>
+    <button type="submit">Submit Payment</button>
+</form>
+
+<script>
+    // Create a Stripe Element
+    const elements = stripe.elements();
+    const cardElement = elements.create('card');
+    cardElement.mount('#card-element');
+
+    // Handle form submission
+    document.getElementById('payment-form').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        // Create payment method using Stripe.js
+        const { paymentMethod, error } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardElement,
+        });
+
+        if (error) {
+            console.error(error.message);
+        } else {
+            // Send payment details to Firebase or your server for processing
+            const paymentDetails = {
+                paymentMethodId: paymentMethod.id,
+                // Include other relevant details
+            };
+            // You can then handle payment processing, e.g., storing paymentDetails in Firebase
+            console.log(paymentDetails);
+        }
+    });
+</script>
+
+<script>
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "firebase/app";
+    import { getAnalytics } from "firebase/analytics";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+        apiKey: "AIzaSyACeAF5_819WDlV2PM7FEQQ5R2YGGWklCM",
+        authDomain: "techexchange-76048.firebaseapp.com",
+        databaseURL: "https://techexchange-76048-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "techexchange-76048",
+        storageBucket: "techexchange-76048.appspot.com",
+        messagingSenderId: "396217100321",
+        appId: "1:396217100321:web:ba771f3033a2caf6ec1b60",
+        measurementId: "G-51BT4968FL"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const stripe = Stripe('pk_test_51OrzrBC0QgRlIqeyDzXT5JQIaqbfPKeKJaTJpreud7qdxvn0YL64cCxEBgnBC95H8EZo3rpROws9X4mmlpvuTmG200NqqkX8Iq');
+
+</script>
+
+</html>
