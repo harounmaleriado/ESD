@@ -218,67 +218,85 @@
             document.getElementById('toggleSortPrice').addEventListener('click', toggleSortOrderPrice);
             applyPriceFilter(); // Apply the initial filter
 
-            document.addEventListener('DOMContentLoaded', () => {
-                const searchForm = document.getElementById('searchForm');
-                const searchInput = document.getElementById('searchInput');
-                const resultsContainer = document.getElementById('resultsContainer');
+});
 
-                searchForm.addEventListener('submit', async (event) => {
-                    event.preventDefault(); // Prevent default form submission behavior
-                    const searchTerm = searchInput.value;
-                    const response = await fetch(`http://localhost:8000/search/?query=${searchTerm}`);
-                    const products = await response.json();
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    const suggestionsPanel = document.getElementById('searchResults');
 
-                    // Clear previous results
-                    resultsContainer.innerHTML = '';
+    console.log("Event listener attached");
+    searchInput.addEventListener('input', () => {
+        console.log("Input event triggered");
+        const query = searchInput.value.trim();
 
-                    // Display new results
-                    products.forEach(product => {
-                        const productElement = document.createElement('div');
-                        productElement.textContent = product.name; // Adjust according to your product structure
-                        resultsContainer.appendChild(productElement);
-                    });
-                });
-            });
-        });
+        if (query.length > 0) {
+            // Call the Flask microservice for search
+            fetch(`http://localhost:5000/search?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Search executed");
+                    console.log("Hits:", data);
+                    suggestionsPanel.innerHTML = ''; // Clear previous suggestions
+                    suggestionsPanel.style.display = data.length > 0 ? 'block' : 'none';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchInput = document.getElementById('searchInput');
-            console.log("searchInput element:", searchInput);
-            const suggestionsPanel = document.getElementById('searchResults');
-
-            const client = algoliasearch('60IC04XR8A', '3b334f990956ade50fd2618975c1f586');
-            const index = client.initIndex('search_posts');
-
-            console.log("Event listener attached");
-            searchInput.addEventListener('input', () => {
-                console.log("Input event triggered");
-                const query = searchInput.value.trim();
-
-                if (query.length > 0) {
-                    index.search(query).then(({ hits }) => {
-                        console.log("Search executed");
-                        console.log("Hits:", hits);
-                        suggestionsPanel.innerHTML = ''; // Clear previous suggestions
-                        suggestionsPanel.style.display = hits.length > 0 ? 'block' : 'none'; // Show or hide the panel
-
-                        hits.forEach(hit => {
-                            const suggestionElement = document.createElement('div');
-                            suggestionElement.textContent = hit.name; // Use textContent for text to prevent HTML injection
-                            suggestionElement.classList.add('suggestion');
-                            suggestionElement.addEventListener('click', () => {
-                                console.log(`Redirecting to product details for ${hit.objectID}`);
-                                window.location.href = `pages/productDetails.html?product=${hit.objectID}`;
-                            });
-                            suggestionsPanel.appendChild(suggestionElement);
+                    data.forEach(hit => {
+                        const suggestionElement = document.createElement('div');
+                        suggestionElement.textContent = hit.name; // Adjust according to your data structure
+                        suggestionElement.classList.add('suggestion');
+                        suggestionElement.addEventListener('click', () => {
+                            console.log(`Redirecting to product details for ${hit.objectID}`);
+                            window.location.href = `./pages/productDetails.html?product=${hit.objectID}`;
                         });
+                        suggestionsPanel.appendChild(suggestionElement);
                     });
-                } else {
-                    suggestionsPanel.innerHTML = '';
-                    suggestionsPanel.style.display = 'none'; // Hide the panel if the query is empty
-                }
-            });
-        });
+                })
+                .catch(error => console.error('Error during fetch:', error));
+        } else {
+            suggestionsPanel.innerHTML = '';
+            suggestionsPanel.style.display = 'none'; // Hide the panel if the query is empty
+        }
+    });
+});
+
+
+
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     const searchInput = document.getElementById('searchInput');
+        //     console.log("searchInput element:", searchInput);
+        //     const suggestionsPanel = document.getElementById('searchResults');
+
+        //     const client = algoliasearch('60IC04XR8A', '3b334f990956ade50fd2618975c1f586');
+        //     const index = client.initIndex('search_posts');
+
+        //     console.log("Event listener attached");
+        //     searchInput.addEventListener('input', () => {
+        //         console.log("Input event triggered");
+        //         const query = searchInput.value.trim();
+
+        //         if (query.length > 0) {
+        //             index.search(query).then(({ hits }) => {
+        //                 console.log("Search executed");
+        //                 console.log("Hits:", hits);
+        //                 suggestionsPanel.innerHTML = ''; // Clear previous suggestions
+        //                 suggestionsPanel.style.display = hits.length > 0 ? 'block' : 'none'; // Show or hide the panel
+
+        //                 hits.forEach(hit => {
+        //                     const suggestionElement = document.createElement('div');
+        //                     suggestionElement.textContent = hit.name; // Use textContent for text to prevent HTML injection
+        //                     suggestionElement.classList.add('suggestion');
+        //                     suggestionElement.addEventListener('click', () => {
+        //                         console.log(`Redirecting to product details for ${hit.objectID}`);
+        //                         window.location.href = `pages/productDetails.html?product=${hit.objectID}`;
+        //                     });
+        //                     suggestionsPanel.appendChild(suggestionElement);
+        //                 });
+        //             });
+        //         } else {
+        //             suggestionsPanel.innerHTML = '';
+        //             suggestionsPanel.style.display = 'none'; // Hide the panel if the query is empty
+        //         }
+        //     });
+        // });
 
         // Listen for the enter key or search button click to navigate to product details
         searchInput.addEventListener('keypress', (e) => {
