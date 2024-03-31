@@ -17,7 +17,7 @@ def add_listing():
         longitude = request.form.get('longitude')
         name = request.form.get('name')
         price = request.form.get('price')
-        user_id = int(request.form.get('user_id'))
+        user_id = request.form.get('user_id')
 
         category = [category] 
 
@@ -47,7 +47,7 @@ def add_listing():
         # Handle other exceptions
         return jsonify({"error": str(e)}), 500
 
-@listing_bp.route('/listings/<int:user_id>', methods=['GET'])
+@listing_bp.route('/listings/<user_id>', methods=['GET'])
 def get_listings(user_id):
     """
     Retrieve all listings for a specific user.
@@ -80,12 +80,14 @@ def compare_listings():
             "listing_1": {
                 "name": listing_1.get('name'),
                 "desc": listing_1.get('desc'),
-                "price": listing_1.get('price')
+                "price": listing_1.get('price'),
+                "images": listing_1.get('images') 
             },
             "listing_2": {
                 "name": listing_2.get('name'),
                 "desc": listing_2.get('desc'),
-                "price": listing_2.get('price')
+                "price": listing_2.get('price'),
+                "images": listing_2.get('images')
             }
         }
         return jsonify(result), 200
@@ -102,4 +104,20 @@ def get_all_listings():
         return jsonify(listings), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+
+@listing_bp.route('/listing/<listing_id>', methods=['GET'])
+def get_listing(listing_id):
+    """
+    Retrieve a listing by its Firestore document ID.
+    """
+    try:
+        listing = Listing.get_listing_by_id(listing_id)
+        if listing:
+            return jsonify(listing), 200
+        else:
+            return jsonify({"error": "Listing not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 

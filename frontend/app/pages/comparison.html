@@ -42,6 +42,11 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -52,21 +57,44 @@
 
     <div id="comparisonResult"></div>
 
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
     <script>
         function compareHardware() {
             const hardware1 = document.getElementById('hardware1').value;
             const hardware2 = document.getElementById('hardware2').value;
             
-            fetch('/compare', {
+            fetch('http://localhost:8000/compare', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ hardware1, hardware2 }),
+                body: JSON.stringify({ "product_id_1":hardware1, "product_id_2":hardware2 }),
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('comparisonResult').innerText = JSON.stringify(data, null, 2);
+                const comparisonDiv = document.getElementById('comparisonResult');
+                comparisonDiv.innerHTML = ''; // Clear previous results;
+
+                // Function to append images
+                function appendImages(listing) {
+                    if (listing && listing.images) {
+                        listing.images.forEach(imageUrl => {
+                            const img = document.createElement('img');
+                            img.src = imageUrl;
+                            img.alt = 'Listing Image'; // It's good practice to have an alt attribute
+                            img.style.maxWidth = '100%'; // Ensure images are not too large
+                            img.style.height = 'auto'; // Keep the aspect ratio
+                            comparisonDiv.appendChild(img);
+                        });
+                    }
+                }
+
+                // Append images for listing 1
+                appendImages(data.listing_1);
+
+                // Append images for listing 2
+                appendImages(data.listing_2);
             })
             .catch((error) => {
                 console.error('Error:', error);

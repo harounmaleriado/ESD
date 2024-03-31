@@ -239,15 +239,51 @@
                 listingsContainer.innerHTML = '<h4>Your Listings</h4>';
                 if (listings && Array.isArray(listings)) {
                     listings.forEach(listing => {
-                        const listingElement = document.createElement('div');
-                        listingElement.classList.add('listing');
-                        listingElement.innerHTML = `
-                <p><strong>Name:</strong> ${listing.name}</p>
-                <p><strong>Description:</strong> ${listing.desc}</p>
-                <p><strong>Category:</strong> ${listing.category.join(', ')}</p> 
-                <p><strong>Price:</strong> $${listing.price}</p>
-            `;
-                        listingsContainer.appendChild(listingElement);
+                        // Create a Bootstrap card for each listing
+                        const card = document.createElement('div');
+                        card.className = 'card mb-3';
+                        card.style.width = '18rem'; // Adjust card width as needed
+
+                        // Check if the listing has at least one image
+                        const img = document.createElement('img');
+                        img.className = 'card-img-top';
+                        if (listing.images && listing.images.length > 0) {
+                            img.src = listing.images[0];
+                        } else {
+                            // Provide a default image or leave it blank
+                            img.src = '/assets/images/no_image.png'; // Path to a default image
+                            img.alt = 'Default Image';
+                        }
+                        img.alt = listing.name;
+
+                        // Card body
+                        const cardBody = document.createElement('div');
+                        cardBody.className = 'card-body';
+
+                        // Listing name
+                        const cardTitle = document.createElement('h5');
+                        cardTitle.className = 'card-title';
+                        cardTitle.textContent = listing.name;
+
+                        // Listing description
+                        const cardText = document.createElement('p');
+                        cardText.className = 'card-text';
+                        cardText.textContent = listing.desc;
+
+                        // Listing price
+                        const priceText = document.createElement('p');
+                        priceText.className = 'card-text';
+                        priceText.innerHTML = `<strong>Price:</strong> $${listing.price}`;
+
+                        // Compile the card
+                        cardBody.appendChild(cardTitle);
+                        cardBody.appendChild(cardText);
+                        cardBody.appendChild(priceText);
+                        card.appendChild(img);
+                        card.appendChild(cardBody);
+
+                        // Append the card to the listings container
+                        listingsContainer.appendChild(card);
                     });
                 } else {
                     listingsContainer.innerHTML += '<p>No listings found or invalid data format.</p>';

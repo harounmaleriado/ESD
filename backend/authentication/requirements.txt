@@ -7,3 +7,4 @@ PyMySQL==1.1.0
 SQLAlchemy==2.0.28
 cryptography
 Flask-Cors==4.0.0
+firebase-admin==6.5.0

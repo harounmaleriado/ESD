@@ -88,6 +88,16 @@ class Listing:
         except Exception as e:
             raise e
 
+    @staticmethod
+    def get_listing_by_id(listing_id):
+        try:
+            listing_ref = db.collection('post').document(listing_id)
+            listing = listing_ref.get()
+            return listing.to_dict() if listing.exists else None
+        except Exception as e:
+            raise e
+
+
 
 
 

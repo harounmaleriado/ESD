@@ -3,7 +3,7 @@ from main.models.profile_models import Profile
 
 profile_bp = Blueprint('profile_bp', __name__)
 
-@profile_bp.route('/profile/<int:user_id>', methods=['PUT'])
+@profile_bp.route('/profile/<user_id>', methods=['PUT'])
 def update_profile(user_id):
     data = request.form
     file =request.files.get('profile_pic')
@@ -33,7 +33,7 @@ def update_profile(user_id):
     else:
         return jsonify({"message": "Profile not found"}), 404
 
-@profile_bp.route('/profile/<int:user_id>', methods=['GET'])
+@profile_bp.route('/profile/<user_id>', methods=['GET'])
 def get_profile(user_id):
     profile = Profile.get_by_user_id(user_id)
     if profile:

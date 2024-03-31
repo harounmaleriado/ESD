@@ -37,7 +37,7 @@ def get_reviews():
     return jsonify({'reviews': reviews_list})
 
 
-@review_bp.route('/review/<int:reviewee_id>', methods=['GET'])
+@review_bp.route('/review/<reviewee_id>', methods=['GET'])
 def get_review_by_reviewee(reviewee_id):
     reviews = Review.query.filter_by(reviewee_id=reviewee_id).all()
     reviews_list = [{
