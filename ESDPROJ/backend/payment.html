@@ -125,17 +125,19 @@
                 <p id="productDescription"><strong>Description:</strong> rarely used</p>
                 <p id="sellerName"><strong>Seller:</strong> Seller Name</p>
                 <p id="productPrice"><strong>Price:</strong> $Price</p>
-                <form action="/checkout" method="POST">
-                    <button type="submit">Checkout</button>
-                  </form>
+                <script async src="https://js.stripe.com/v3/buy-button.js">
+                </script>
+
+                <stripe-buy-button buy-button-id="buy_btn_1OwJYpC0QgRlIqeyn3WYfKqB"
+                    publishable-key="pk_test_51OrzrBC0QgRlIqeyDzXT5JQIaqbfPKeKJaTJpreud7qdxvn0YL64cCxEBgnBC95H8EZo3rpROws9X4mmlpvuTmG200NqqkX8Iq">
+                </stripe-buy-button>
                 <button class="btn btn-outline-primary" onclick="location.href='chat-link.html'">Chat with
                     Seller</button>
             </div>
         </div>
     </div>
 
-   
+
 </body>
 
 </html>
-
