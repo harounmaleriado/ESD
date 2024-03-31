@@ -81,16 +81,14 @@
         }
         
         function compareItems() {
-    const item1Id = document.getElementById('item1').value; // Get the selected ID from the first dropdown
-    const item2Id = document.getElementById('item2').value; // Get the selected ID from the second dropdown
+    const item1Id = document.getElementById('item1').value;
+    const item2Id = document.getElementById('item2').value;
 
     if (!item1Id || !item2Id) {
-        // Handle the case where one or both dropdowns don't have an item selected
         document.getElementById('comparisonResult').innerHTML = `<p>Please select two items to compare.</p>`;
-        return; // Exit the function early
+        return;
     }
 
-    // Assuming your backend expects item IDs in an object with product_id_1 and product_id_2
     fetch('http://localhost:5001/compare', {
         method: 'POST',
         headers: {
@@ -101,15 +99,16 @@
     .then(response => response.json())
     .then(data => {
         const container = document.getElementById('comparisonResult');
-        container.innerHTML = ''; // Clear previous results
-        container.className = 'card-container'; // Apply styling to the container
+        container.innerHTML = '';
+        container.className = 'card-container';
 
-        // Access each listing from the data object
         const listings = [data.listing_1, data.listing_2];
         listings.forEach(item => {
+
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
+                <img src="${item.images}" alt="${item.images}" style="width:50%;height:50%;">
                 <h3>${item.name}</h3>
                 <p>${item.desc}</p>
                 <p><strong>Price:</strong> $${item.price}</p>
@@ -122,6 +121,7 @@
         document.getElementById('comparisonResult').innerHTML = `<p>Error fetching comparison data.</p>`;
     });
 }
+
 
     </script>
 </body>
