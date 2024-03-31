@@ -4,6 +4,8 @@ import redis
 import random 
 import json
 import string
+from datetime import datetime
+
 from string import ascii_uppercase
 
 app = Flask(__name__)
@@ -46,27 +48,12 @@ def generate_unique_code():
 
     :return: A unique room code.
     """
-    while True:
-        code = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
+    
+    code = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))        
         
-        # Check if the room already exists in Redis
-        metadata_key = f"room:{code}:metadata"
-        if not redis_client.exists(metadata_key):
-            break  # Unique code generated
+        
 
     return code
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -102,7 +89,7 @@ def home():
         
         room = code 
         if create != False:
-            room = generate_unique_code(4)
+            room = generate_unique_code()
             rooms[room] = {"members" : 0, "messages": []}
 
         elif code not in rooms:
@@ -121,11 +108,14 @@ def room():
     if room is None or session.get("name") is None or room not in rooms:
         return redirect(url_for("home"))
 
-    # Retrieve messages from Redis
+  
+    # return render_template("room.html", code=room, messages=messages)
+     # Retrieve messages from Redis
     messages = r.lrange(f"room:{room}:messages", 0, -1)
+    # Deserialize the JSON strings into dictionaries
+    messages = [json.loads(message) for message in messages]
+    # return render_template("room.html", code=room, messages=rooms[room]["messages"])
     return render_template("room.html", code=room, messages=messages)
-
-    return render_template("room.html", code=room, messages=rooms[room]["messages"])
 
 @socketio.on("message")
 def message(data):
@@ -134,14 +124,19 @@ def message(data):
     if room not in rooms:
         return
     
+    # Get the current date and time
+    now = datetime.now()
+    # Format the date and time as a string, e.g., "2023-03-29 14:20:00"
+    timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+
     content = {
         "name": session.get("name"),
-        "message": data["data"]
+        "message": data["data"],
+        "timestamp": timestamp  # Add the timestamp to the content
     }
 
-    # Store message in Redis
+    # Store message in Redis, including the timestamp
     r.rpush(f"room:{room}:messages", json.dumps(content))
-
     # send(content, room=room)
 
     send(content, to=room)
