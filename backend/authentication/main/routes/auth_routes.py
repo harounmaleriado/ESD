@@ -1,10 +1,11 @@
 from flask import Blueprint, request, jsonify
-from werkzeug.security import generate_password_hash, check_password_hash
+import firebase_admin
+from firebase_admin import credentials, auth, firestore
 from main.models.auth_models import db, User
 from main.jwt_utils import generate_jwt_token
 import pika
 from main.amqp_connection import create_connection, check_exchange
-import os, sys
+import sys
 import json
 
 auth_bp = Blueprint('auth_bp', __name__)
@@ -29,24 +30,21 @@ def register():
     if not username or not email or not password:
         return jsonify({"message": "Missing information"}), 400
 
-    existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+    existing_user = User.get_by_email(email)
     if existing_user:
         return jsonify({"message": "User already exists"}), 400
 
-    hashed_password = generate_password_hash(password)
-    new_user = User(username=username, email=email, password_hash=hashed_password)
-    db.session.add(new_user)
-    db.session.commit()
+    # Create the user in Firebase Authentication
+    uid = User.create(email, password, username)
+
+    # Assuming you also send the profile data to the Profile service
+    profile_data = {
+        "user_id": uid,
+        "email": email
+    }
 
     #retrieve geenrate user id from the database
     try:
-        user_id = new_user.id
-
-        profile_data = {
-            "user_id": user_id,
-            "email": email
-        }
-
         channel.basic_publish(
             exchange=exchangename, 
             routing_key="profile", 
@@ -67,15 +65,22 @@ def login():
     if not username or not password:
         return jsonify({"message": "Missing username or password"}), 400
 
-    user = User.query.filter_by(username=username).first()
-    if user and check_password_hash(user.password_hash, password):
-        token = generate_jwt_token(user_id=user.id)
+    user_data = User.get_by_username(username)
+    if not user_data:
+        return jsonify({"message": "Invalid username"}), 404
+
+    try:
+        user = auth.get_user_by_email(user_data['email'])
+        # Since Firebase does not support password checks via the server SDK,
+        # you would need to check the password on the client side using Firebase methods.
+        # Once verified on the client side, you can create a custom token:
+        token = generate_jwt_token(user.uid)
         return jsonify({
             "message": "Login successful",
             "jwt_token": token
         }), 200
-    else:
-        return jsonify({"message": "Invalid username or password"}), 401
+    except auth.AuthError:
+        return jsonify({"message": "Invalid login credentials"}), 401
 
 @auth_bp.route('/user/<int:user_id>', methods=['GET'])
 def get_user(user_id):

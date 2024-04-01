@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refund Request</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <h1>Refund Request</h1>
+    <button type="button" class="btn btn-primary" id="refund-button" data-toggle="modal" data-target="#refundModal">
+        Refund
+    </button>
+
+    <!-- Refund Modal -->
+    <div class="modal fade" id="refundModal" tabindex="-1" role="dialog" aria-labelledby="refundModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="refundModalLabel">Refund Request</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="refund-form">
+                        <label for="reason">Select a reason for refund:</label><br>
+                        <input type="radio" id="reason1" name="reason" value="Item not as described">
+                        <label for="reason1">Item not as described</label><br>
+                        <input type="radio" id="reason2" name="reason" value="Item damaged">
+                        <label for="reason2">Item damaged</label><br>
+                        <input type="radio" id="reason3" name="reason" value="Changed mind">
+                        <label for="reason3">Changed mind</label><br><br>
+                        <!-- Inside the refund form -->
+                        <input type="hidden" id="payment-intent-id" name="payment_intent_id"
+                            value="{{ payment_intent_id }}">
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!-- Pass payment intent ID directly -->
+                    <button type="button" class="btn btn-primary" id="refund-button"
+                        data-payment="{{ payment_intent_id }}" onclick="refundPayment(this)">Submit Refund Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="refund-status"></div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('refund-button').addEventListener('click', async function (event) {
+            event.preventDefault();
+
+            const reason = document.querySelector('input[name="reason"]:checked').value;
+            const response = await fetch('/refund', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ reason: reason })
+            });
+
+            const responseData = await response.json();
+            document.getElementById('refund-status').innerText = responseData.message;
+        });
+        function refundPayment(button) {
+            // Access payment ID from data-payment attribute
+            payment_id = button.dataset.payment;
+            var params = {}
+            params.payment_id = payment_id;
+            return fetch("/refund", {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(params)
+
+            })
+                .then(function (result) {
+                    return result.json();
+                })
+                .then(function (json) {
+                    if (json.error) {
+                        displayMsg("Error: " + json.error.message);
+                    }
+                    else {
+                        displayMsg("Payment Refunded!");
+                    }
+                })
+        }
+
+    </script>
+</body>
+
+</html>
