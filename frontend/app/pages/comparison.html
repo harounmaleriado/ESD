@@ -105,7 +105,7 @@
         });
 
         function fetchItems() {
-            fetch('http://localhost:5001/listings') // Adjust this URL to your dataservice endpoint
+            fetch('http://localhost:8000/listings') // Adjust this URL to your dataservice endpoint
             .then(response => response.json())
             .then(items => {
                 const dropdown1 = document.getElementById('item1');
@@ -129,7 +129,7 @@
         return;
     }
 
-    fetch('http://localhost:5001/compare', {
+    fetch('http://localhost:8000/compare', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
