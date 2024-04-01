@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Assuming dataservice.py has been updated to accept multiple item IDs at the '/get-items' endpoint
-DATASERVICE_URL = 'http://localhost:5001/compare'
+DATASERVICE_URL = 'http://localhost:8000/compare'
 
 @app.route('/compare', methods=['POST'])
 def compare_items():
