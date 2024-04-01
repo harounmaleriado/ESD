@@ -1,31 +1,37 @@
-# compare.py
-from flask import Flask, request, jsonify
-from flask import Flask
-from flask_cors import CORS
-import requests
-app = Flask(__name__)
-CORS(app)
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import httpx
 
-# Assuming dataservice.py has been updated to accept multiple item IDs at the '/get-items' endpoint
+app = FastAPI()
+
+# Define your Pydantic models to enforce type checking and data validation
+class ItemIDs(BaseModel):
+    item_ids: list[str]
+
+# Setup CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 DATASERVICE_URL = 'http://localhost:5001/compare'
 
-@app.route('/compare', methods=['POST'])
-def compare_items():
-    # Example payload: {"item_ids": ["item1", "item2"]}
-    item_ids = request.json.get('item_ids', [])
-    
-    # Forward the request to dataservice.py to fetch data for the specified item IDs
-    try:
-        response = requests.post(DATASERVICE_URL, json={'item_ids': item_ids}, timeout=10)
-        if response.status_code == 200:
-            # Return the fetched data directly to the client
-            return jsonify(response.json())
-        else:
-            # Handle possible errors from the dataservice with its response status
-            return jsonify({'error': 'Data service error', 'status': response.status_code}), response.status_code
-    except requests.exceptions.RequestException as e:
-        # Handle exceptions related to the request made to dataservice, such as connection errors
-        return jsonify({'error': str(e)}), 500
+@app.post('/compare')
+async def compare_items(item_ids: ItemIDs):
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(DATASERVICE_URL, json={'item_ids': item_ids.item_ids}, timeout=10.0)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                raise HTTPException(status_code=response.status_code, detail="Data service error")
+        except httpx.RequestError as exc:
+            raise HTTPException(status_code=500, detail=str(exc))
 
-if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+# Note: FastAPI's development server is run differently compared to Flask
+# You would typically run a FastAPI app with a command like:
+# uvicorn filename:app --reload --port 5000
