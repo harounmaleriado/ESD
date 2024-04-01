@@ -42,10 +42,10 @@ Make sure you are in /backend folder
 # Alternative way
 ## Download my images directly from the hub
 **No need to edit compose.yaml file**
-1. `docker pull tshaun/profile:1.6`
-2. `docker pull tshaun/auth:1.8`
-3. `docker pull tshaun/review:1.3`
+1. `docker pull tshaun/profile:1.7`
+2. `docker pull tshaun/auth:1.9`
+3. `docker pull tshaun/review:1.4`
 4. `docker pull tshaun/amqp_setup:1.0`
-5. `docker pull tshaun/listing:1.4`
+5. `docker pull tshaun/listing:1.7`
 5. `docker compose up`
 6. Remember to docker compose up kong as well see step 1 and 2 under **"Build the images"**
