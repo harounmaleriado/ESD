@@ -35,11 +35,20 @@ services:
   #     retries: 5
 
   chat-service:
+<<<<<<< HEAD
+    image: tshaun/chat:1.0
+    networks:
+      - kong-net
+
+=======
     build: .
     image: jonang/chatmicroservice
     environment:
       - FLASK_APP=main.py
       - FLASK_RUN_HOST=0.0.0.0
+    networks:
+      - kong-net
+>>>>>>> 1326b2a76d1f1ff92b6c89da9062b57ae9c22c88
   redis:
     image: "redis:alpine"
     ports:

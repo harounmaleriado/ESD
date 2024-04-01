@@ -29,18 +29,19 @@ try:
 except redis.exceptions.ConnectionError as e:
     print(f"Redis connection error: {e}")
 
-# rooms = {}
+rooms = {}
 
-# def generate_unique_code(length):
-#     while True:
-#         code = ""
-#         for _ in range(length):
-#             code += random.choice(ascii_uppercase)
+def generate_unique_code(length):
+    while True:
+        code = ""
+        for _ in range(length):
+            code += random.choice(ascii_uppercase)
 
-#         if code not in rooms:
-#             break
+        if code not in rooms:
+            break
 
-#     return code
+    return code
+
 
 def generate_unique_code():
     """
@@ -50,6 +51,9 @@ def generate_unique_code():
     """
     
     code = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))        
+        
+        
+
     return code
 
 
@@ -77,7 +81,8 @@ def home():
         code = request.form.get("code")
         join = request.form.get("join", False)
         create = request.form.get("create", False)
-
+        
+        
         if not name:
             return render_template("home.html", error="Please enter a name.")
         
@@ -166,8 +171,12 @@ def disconnect():
     name = session.get("name")
     leave_room(room)
 
+    if room in rooms:
+        rooms[room]["members"] -= 1 #counting the number of people in the room, this is not important for proj
+        if rooms[room]["members"] <= 0:
+            del rooms[room]
     
-    send({"name": name, "message": "has left the room", "timestamp":" "}, to=room)
+    send({"name": name, "message": "has left the room"}, to=room)
     print(f"{name} has left the room {room}")
 
 
