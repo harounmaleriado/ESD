@@ -10,13 +10,3 @@ client.on('error', (err) => console.log('Redis Client Error', err));
 
 // Connect to Redis
 client.connect();
-
-async function recordPayment(orderId, paymentDetails) {
-    try {
-        await client.hSet(`orders:${orderId}`, paymentDetails);
-        console.log(`Order ${orderId} payment details recorded successfully.`);
-    } catch (error) {
-        console.error('Failed to record payment details:', error);
-    }
-}
-
