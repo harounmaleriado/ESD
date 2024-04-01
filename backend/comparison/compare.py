@@ -18,12 +18,8 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-<<<<<<< HEAD
 # Assuming dataservice.py has been updated to accept multiple item IDs at the '/get-items' endpoint
 DATASERVICE_URL = 'http://localhost:8000/compare'
-=======
-DATASERVICE_URL = 'http://localhost:5001/compare'
->>>>>>> 3f5c8e405bacd7ece295573fcf8e9111e04c19c5
 
 @app.post("/compare")
 async def compare_items(item_ids: ItemIds):

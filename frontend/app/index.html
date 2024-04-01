@@ -14,7 +14,34 @@
 
 <body>
     <header>
-        <script id="replace_with_navbar" src="./assets/js/navbar.js"></script>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Tech-Exchange</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/pages/marketplace.html">Marketplace</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/pages/profile.html">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/pages/forum.html">Forum</a>
+                        </li>
+                    </ul>
+                    <div class="navbar-nav ms-auto" id="userAuthSection">
+                        <!-- Dynamically filled based on auth status -->
+                    </div>
+                </div>
+            </div>
+        </nav>
         <br><br>
         <div class="container">
             <div id="carouselExample" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
@@ -204,8 +231,8 @@
                 </div>
             </div>
         `;
-        
-        itemsContainer.innerHTML += cardHtml;
+
+                itemsContainer.innerHTML += cardHtml;
 
             });
         }
@@ -220,56 +247,56 @@
             document.getElementById('toggleSortPrice').addEventListener('click', toggleSortOrderPrice);
             applyPriceFilter(); // Apply the initial filter
 
-});
+        });
 
-document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchInput');
-    const suggestionsPanel = document.getElementById('searchResults');
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            const suggestionsPanel = document.getElementById('searchResults');
 
-    console.log("Event listener attached");
-    searchInput.addEventListener('input', () => {
-        console.log("Input event triggered");
-        const query = searchInput.value.trim();
+            console.log("Event listener attached");
+            searchInput.addEventListener('input', () => {
+                console.log("Input event triggered");
+                const query = searchInput.value.trim();
 
-        if (query.length > 0) {
-            // Call the Flask microservice for search
-            fetch(`http://localhost:5000/search?query=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Search executed");
-                    console.log("Hits:", data);
-                    suggestionsPanel.innerHTML = ''; // Clear previous suggestions
-                    suggestionsPanel.style.display = data.length > 0 ? 'block' : 'none';
+                if (query.length > 0) {
+                    // Call the Flask microservice for search
+                    fetch(`http://localhost:5000/search?query=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("Search executed");
+                            console.log("Hits:", data);
+                            suggestionsPanel.innerHTML = ''; // Clear previous suggestions
+                            suggestionsPanel.style.display = data.length > 0 ? 'block' : 'none';
 
-                    data.forEach(hit => {
-                        const suggestionElement = document.createElement('div');
-                        suggestionElement.textContent = hit.name; // Adjust according to your data structure
-                        suggestionElement.classList.add('suggestion');
-                        suggestionElement.addEventListener('click', () => {
-                            console.log(`Redirecting to product details for ${hit.objectID}`);
-                            window.location.href = `./pages/productDetails.html?product=${hit.objectID}`;
-                        });
-                        suggestionsPanel.appendChild(suggestionElement);
-                    });
-                })
-                .catch(error => console.error('Error during fetch:', error));
-        } else {
-            suggestionsPanel.innerHTML = '';
-            suggestionsPanel.style.display = 'none'; // Hide the panel if the query is empty
-        }
-    });
-});
-document.addEventListener('DOMContentLoaded', function() {
+                            data.forEach(hit => {
+                                const suggestionElement = document.createElement('div');
+                                suggestionElement.textContent = hit.name; // Adjust according to your data structure
+                                suggestionElement.classList.add('suggestion');
+                                suggestionElement.addEventListener('click', () => {
+                                    console.log(`Redirecting to product details for ${hit.objectID}`);
+                                    window.location.href = `./pages/productDetails.html?product=${hit.objectID}`;
+                                });
+                                suggestionsPanel.appendChild(suggestionElement);
+                            });
+                        })
+                        .catch(error => console.error('Error during fetch:', error));
+                } else {
+                    suggestionsPanel.innerHTML = '';
+                    suggestionsPanel.style.display = 'none'; // Hide the panel if the query is empty
+                }
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function () {
             const userAuthSection = document.getElementById('userAuthSection');
 
             // Check if JWT token exists in local storage
             const token = localStorage.getItem('jwt_token');
-            console.log('Token:', token);   
+            console.log('Token:', token);
             if (token) {
                 // Decode the token to extract user ID - simplified for demonstration
                 const base64Url = token.split('.')[1];
                 const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
                     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
                 }).join(''));
 
@@ -283,19 +310,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Content-Type': 'application/json'
                     }
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if(data && data.name) {
-                        userAuthSection.innerHTML = `<span>Welcome, ${data.name}! <button id="logoutButton" class="btn btn-light">Logout</button></span>`;
-                        document.getElementById('logoutButton').addEventListener('click', logoutUser);
-                    } else {
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.name) {
+                            userAuthSection.innerHTML = `<span>Welcome, ${data.name}! <button id="logoutButton" class="btn btn-light">Logout</button></span>`;
+                            document.getElementById('logoutButton').addEventListener('click', logoutUser);
+                        } else {
+                            showAuthButtons();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user profile:', error);
                         showAuthButtons();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching user profile:', error);
-                    showAuthButtons();
-                });
+                    });
             } else {
                 showAuthButtons();
             }
