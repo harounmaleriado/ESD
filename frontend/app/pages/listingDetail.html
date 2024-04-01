@@ -1,28 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listing Details</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <style>
-        body { background-color: #f8f9fa; }
-        .container { max-width: 800px; margin-top: 40px; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .image { max-width: 100%; height: auto; border-radius: 8px; }
-        .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn-custom { background-color: #007bff; color: #ffffff; }
-        .btn-custom:hover { background-color: #0056b3; }
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 800px;
+            margin-top: 40px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-custom {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+
         /* Additional styles for the chat button */
         .chat-btn {
             margin-top: 15px;
             background-color: #28a745;
             color: white;
         }
+
         .chat-btn:hover {
             background-color: #218838;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="detail-header">
@@ -42,6 +74,7 @@
         // Extract the listing ID from the URL query parameters
         const params = new URLSearchParams(window.location.search);
         const listingId = params.get('id');
+        let sellerId;
 
         async function fetchListingDetails() {
             if (!listingId) {
@@ -55,6 +88,7 @@
                     throw new Error('Failed to fetch listing details.');
                 }
                 const listing = await response.json();
+                sellerId = listing.user_Id; // Set the seller ID
 
                 // Update page content with listing details
                 document.getElementById('listingName').textContent = listing.name;
@@ -67,14 +101,14 @@
                     document.getElementById('listingLocation').textContent = "Location not provided";
                 }
 
-                
+
                 // Assume the first image is the primary one
                 if (listing.images && listing.images.length > 0) {
                     document.getElementById('listingImage').src = listing.images[0];
                 } else {
                     document.getElementById('listingImage').style.display = 'none'; // Hide if no images
                 }
-                
+
                 // Handle the buy button click (simple example)
                 document.getElementById('buyBtn').addEventListener('click', () => {
                     alert('Implement the buy logic here.');
@@ -87,10 +121,28 @@
         }
 
         fetchListingDetails();
+
+        function parseJwt(token) {
+            var base64Payload = token.split('.')[1];
+            var payload = JSON.parse(window.atob(base64Payload));
+            return payload;
+        }
+
+        const token = localStorage.getItem('jwt_token');
+        const payload = parseJwt(token);
+        const currentUserId = payload.sub;
+
         document.getElementById('chatBtn').addEventListener('click', () => {
-        // Placeholder: Replace with actual chat initiation logic
-            alert('This feature will open a chat with the seller.');
-        });
+        if (!sellerId || !currentUserId) {
+            alert("Cannot initiate chat. Missing information.");
+            return;
+        }
+        // Redirect to a chat page, passing seller and buyer IDs as query parameters
+        // This requires you to have a chat page that handles these parameters for a chat session
+        window.location.href = `/pages/chatroom.html?sellerId=${sellerId}&buyerId=${currentUserId}`;
+    });
+
     </script>
 </body>
+
 </html>
