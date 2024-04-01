@@ -43,9 +43,47 @@
         color: #333;
         margin-top: 0;
     }
+    button {
+        background-color: #455EB5; /* Blue background */
+        color: white; /* White text */
+        border: none; /* Removes the default border */
+        cursor: pointer; /* Changes the cursor to a pointer on hover */
+    }
     </style>
+    <link rel="stylesheet" type="text/css" href="/assets/css//homepage.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/algoliasearch/dist/algoliasearch-lite.umd.js"></script>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Tech-Exchange</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pages/comparison.html">Compare</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pages/forum.html">Forum</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pages/profile.html">Profile</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="userAuthSection" class="navbar-nav ms-auto">
+            <!-- Dynamically filled with user info or auth buttons -->
+        </div>
+    </nav>
     <h1>Compare Items</h1>
     <select id="item1">
         <option value="">Select First Item</option>
