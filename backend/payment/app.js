@@ -7,6 +7,7 @@ const paymentIntentsFile = 'paymentIntents.json';
 app.use(express.json());
 app.use(cors());
 
+
 app.post('/create-checkout-session', async (req, res) => {
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
@@ -77,6 +78,28 @@ app.get('/get-payment-intent-by-product/:productId', (req, res) => {
 });
 
 
+app.use(express.json());
+
+app.post('/api/refund', async (req, res) => {
+    const { itemId } = req.body;
+
+    try {
+        // Lookup the paymentIntentId or chargeId based on itemId
+        // This is a placeholder. You'll need to implement this based on your data storage
+        const paymentIntentId = await findPaymentIntentIdByItemId(itemId);
+
+        const refund = await stripe.refunds.create({
+            payment_intent: paymentIntentId,
+            // For partial refunds, specify an amount:
+            // amount: 1000, // amount in cents
+        });
+
+        res.json({ success: true, refund });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Failed to process refund." });
+    }
+});
 
 
 app.listen(3000, () => console.log('Running on port 3000'));
