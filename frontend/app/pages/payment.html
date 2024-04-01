@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details</title>
+  <link rel="stylesheet" href="../css/productdetail.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+  <header>
+    <script id="replace_with_navbar" src="../assets/js/navbar.js"></script>
+
+  </header>
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-6">
+        <img src="../assets/camera.png" alt="Product Name" class="img-fluid">
+      </div>
+      <div class="col-md-6">
+        <h2 id="name"></h2>
+        <p id="desc"><strong>Description:</strong> rarely used</p>
+        <p id="price"><strong>Seller:</strong> Seller Name</p>
+        <p id="imgUrl">
+        <script src="https://js.stripe.com/v3/"></script>
+        <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+
+        <button id="buyButton" class="btn btn-primary">Buy Now</button>
+        <button class="btn btn-outline-primary" onclick="location.href='chat-link.html'">Chat with Seller</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const stripe = Stripe('pk_test_51OrzrBC0QgRlIqeyDzXT5JQIaqbfPKeKJaTJpreud7qdxvn0YL64cCxEBgnBC95H8EZo3rpROws9X4mmlpvuTmG200NqqkX8Iq');
+  
+    window.addEventListener('DOMContentLoaded', (event) => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const name = urlParams.get('name');
+      const desc = urlParams.get('desc');
+      const price = urlParams.get('price');
+      const imgUrl = urlParams.get('imgUrl');
+  
+      document.getElementById('name').textContent = decodeURIComponent(name);
+      document.getElementById('desc').textContent = decodeURIComponent(desc);
+      document.getElementById('price').textContent = `$${price}`;
+      document.querySelector('.img-fluid').setAttribute('src', decodeURIComponent(imgUrl));
+    });
+  
+    document.getElementById('buyButton').addEventListener('click', () => {
+      const name = document.getElementById('name').textContent;
+      const desc = document.getElementById('desc').textContent;
+      const price = parseFloat(document.getElementById('price').textContent.replace('$', ''));
+      const imgUrl = document.querySelector('.img-fluid').src;
+  
+      fetch('http://localhost:3000/create-checkout-session', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, desc, price, imgUrl }),
+    })
+
+      .then(res => res.json())
+      .then(session => {
+        return stripe.redirectToCheckout({ sessionId: session.id });
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+  
+  
+  
+</body>
+
+</html>
