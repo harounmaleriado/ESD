@@ -6,8 +6,6 @@ const fs = require('fs');
 const paymentIntentsFile = 'paymentIntents.json';
 app.use(express.json());
 app.use(cors());
-const bodyParser = require('body-parser');
-const paymentRoutes = require('./paymentintent');
 
 app.post('/create-checkout-session', async (req, res) => {
   const session = await stripe.checkout.sessions.create({
