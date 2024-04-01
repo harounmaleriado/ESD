@@ -90,10 +90,10 @@ def home():
         room = code 
         if create != False:
             room = generate_unique_code()
-            rooms[room] = {"members" : 0, "messages": []}
+            # rooms[room] = {"members" : 0, "messages": []}
 
-        elif code not in rooms:
-            return render_template("home.html", error="Room does not exist.")
+        # elif code not in rooms:
+        #     return render_template("home.html", error="Room does not exist.")
 
         session["room"] = room
         session["name"] = name
@@ -105,7 +105,7 @@ def home():
 @app.route("/room")
 def room():
     room = session.get("room")
-    if room is None or session.get("name") is None or room not in rooms:
+    if room is None or session.get("name") is None :
         return redirect(url_for("home"))
 
   
@@ -121,8 +121,7 @@ def room():
 def message(data):
 
     room = session.get("room") 
-    if room not in rooms:
-        return
+    
     
     # Get the current date and time
     now = datetime.now()
@@ -140,7 +139,7 @@ def message(data):
     # send(content, room=room)
 
     send(content, to=room)
-    rooms[room]["messages"].append(content)
+    # rooms[room]["messages"].append(content)
     print(f"{session.get('name')} said: {data['data']}")
 
 @socketio.on("connect")
@@ -150,13 +149,14 @@ def connect():
     name = session.get("name")
     if not room or not name:
         return
-    if room not in rooms:
-        leave_room(room)
-        return
+    # if room not in rooms:
+    #     leave_room(room)
+    #     return
+    
     
     join_room(room)
-    send({"name": name, "message" : "has entered the chat"}, to=room)
-    rooms[room]["members"] += 1
+    send({"name": name, "message" : "has entered the chat", "timestamp": " "}, to=room)
+    # rooms[room]["members"] += 1
     print(f"{name} joined room {room}")
 
 

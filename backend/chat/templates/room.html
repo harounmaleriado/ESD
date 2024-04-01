@@ -14,14 +14,14 @@
 
     const messages = document.getElementById("messages");
 
-    const createMessage = (name, msg) => {
+    const createMessage = (name, msg, datetime) => {
         const content = `
     <div class="text">
         <span>
             <strong>${name}</strong>: ${msg}
         </span>
         <span class="muted">
-            ${new Date().toLocaleString()}
+            ${datetime}
         </span>
     </div>
     `;
@@ -29,7 +29,7 @@
     };
 
     socketio.on("message", (data) => {
-        createMessage(data.name, data.message,);
+        createMessage(data.name, data.message, data.timestamp);
     });
 
     const sendMessage = () => {
@@ -41,6 +41,6 @@
 </script>
 {% for msg in messages %}
 <script type="text/javascript">
-    createMessage("{{msg.name}}", "{{msg.message}}");
+    createMessage("{{msg.name}}", "{{msg.message}}", "{{ msg.timestamp }}");
 </script>
 {% endfor %} {% endblock %}
