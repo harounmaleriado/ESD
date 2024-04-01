@@ -4,10 +4,12 @@ const app = express();
 const cors = require('cors');
 const fs = require('fs');
 const paymentIntentsFile = 'paymentIntents.json';
-app.use(express.json());
-app.use(cors());
+
 const bodyParser = require('body-parser');
 const paymentRoutes = require('./paymentintent');
+const admin = require('./firebaseAdmin');
+app.use(express.json());
+app.use(cors());
 
 app.post('/create-checkout-session', async (req, res) => {
   const session = await stripe.checkout.sessions.create({
@@ -78,7 +80,18 @@ app.get('/get-payment-intent-by-product/:productId', (req, res) => {
   res.json({ paymentIntentId });
 });
 
+app.post('/verify-token', async (req, res) => {
+  try {
+    const token = req.body.token;
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    res.send(`Token belongs to user with ID: ${decodedToken.uid}`);
+  } catch (error) {
+    res.status(401).send('Token verification failed');
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
 
 
-
-app.listen(3000, () => console.log('Running on port 3000'));

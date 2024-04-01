@@ -19,4 +19,5 @@ async function recordPayment(orderId, paymentDetails) {
         console.error('Failed to record payment details:', error);
     }
 }
+module.exports = { recordPayment };
 
