@@ -40,6 +40,8 @@ services:
     environment:
       - FLASK_APP=main.py
       - FLASK_RUN_HOST=0.0.0.0
+    networks:
+      - kong-net
   redis:
     image: "redis:alpine"
     ports:
