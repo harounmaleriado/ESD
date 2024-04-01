@@ -27,7 +27,6 @@
                             <a class="nav-link active" aria-current="page" href="/">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/pages/comparison.html">Comparison</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/pages/profile.html">Profile</a>
@@ -154,16 +153,16 @@
         import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
         // Your web app's Firebase configuration
-        // const firebaseConfig = {
-        //     apiKey: "AIzaSyACeAF5_819WDlV2PM7FEQQ5R2YGGWklCM",
-        //     authDomain: "techexchange-76048.firebaseapp.com",
-        //     databaseURL: "https://techexchange-76048-default-rtdb.asia-southeast1.firebasedatabase.app",
-        //     projectId: "techexchange-76048",
-        //     storageBucket: "techexchange-76048.appspot.com",
-        //     messagingSenderId: "396217100321",
-        //     appId: "1:396217100321:web:ba771f3033a2caf6ec1b60",
-        //     measurementId: "G-51BT4968FL"
-        // };
+        const firebaseConfig = {
+            apiKey: "AIzaSyACeAF5_819WDlV2PM7FEQQ5R2YGGWklCM",
+            authDomain: "techexchange-76048.firebaseapp.com",
+            databaseURL: "https://techexchange-76048-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "techexchange-76048",
+            storageBucket: "techexchange-76048.appspot.com",
+            messagingSenderId: "396217100321",
+            appId: "1:396217100321:web:ba771f3033a2caf6ec1b60",
+            measurementId: "G-51BT4968FL"
+        };
 
         async function fetchAndDisplayListings() {
             try {
