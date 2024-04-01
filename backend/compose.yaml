@@ -34,22 +34,33 @@ services:
   #     timeout: 5s
   #     retries: 5
 
+  chat-service:
+    build: .
+    image: jonang/chatmicroservice
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_RUN_HOST=0.0.0.0
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+
   review-mysql:
     image: mysql:8.0
     environment:
-      MYSQL_DATABASE: 'review_database'  
-      MYSQL_USER: 'reviewUser'  
-      MYSQL_PASSWORD: 'reviewPass'  
-      MYSQL_ROOT_PASSWORD: 'reviewRootPass' 
+      MYSQL_DATABASE: 'review_database'
+      MYSQL_USER: 'reviewUser'
+      MYSQL_PASSWORD: 'reviewPass'
+      MYSQL_ROOT_PASSWORD: 'reviewRootPass'
     ports:
-      - "3307:3306" 
+      - "3307:3306"
     volumes:
       - ./review-mysql:/docker-entrypoint-initdb.d
       - review-mysql-data:/var/lib/mysql
     networks:
       - kong-net
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -92,7 +103,7 @@ services:
       - review-mysql
     networks:
       - kong-net
-  
+
   listing-service:
     image: tshaun/listing:1.7
     depends_on:
