@@ -82,31 +82,30 @@ def login():
     except auth.AuthError:
         return jsonify({"message": "Invalid login credentials"}), 401
 
-@auth_bp.route('/user/<int:user_id>', methods=['GET'])
+@auth_bp.route('/user/<user_id>', methods=['GET'])
 def get_user(user_id):
-    user = User.query.get(user_id)
-    if user:
+    try:
+        user_record = auth.get_user(user_id)
         user_data = {
-            'id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'created_at': user.created_at.isoformat(),  # Formatting datetime for JSON response
-            'updated_at': user.updated_at.isoformat()
+            'uid': user_record.uid,
+            'email': user_record.email,
         }
         return jsonify(user_data), 200
-    else:
+    except auth.UserNotFoundError:
         return jsonify({'message': 'User not found'}), 404
+    except auth.AuthError as error:
+        # Handle any other Firebase Auth errors
+        return jsonify({'message': str(error)}), 500
 
 @auth_bp.route('/users', methods=['GET'])
 def get_users():
-    users = User.query.all()
-    users_data = [
-        {
-            'id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'created_at': user.created_at.isoformat(),
-            'updated_at': user.updated_at.isoformat()
-        } for user in users
-    ]
+    users_ref = db.collection('users')  # 'users' is the name of the collection in Firestore
+    docs = users_ref.stream()
+    
+    users_data = []
+    for doc in docs:
+        user = doc.to_dict()
+        user['id'] = doc.id  # Capture the document's ID as well
+        users_data.append(user)
+
     return jsonify(users_data), 200

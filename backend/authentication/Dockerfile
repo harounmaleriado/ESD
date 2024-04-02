@@ -24,8 +24,8 @@ ENV FLASK_ENV=development
 ENV FLASK_RUN_HOST=0.0.0.0
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-#CMD ["flask", "run"]
-CMD ["python", "test_firebase_init.py"]
+CMD ["flask", "run"]
+#CMD ["python", "test_firebase_init.py"]
 
 
 

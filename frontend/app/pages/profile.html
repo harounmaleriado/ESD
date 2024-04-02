@@ -42,11 +42,10 @@
             <!-- User Profile Section -->
             <div class="col-md-2 border-end">
                 <div class="profile-section">
-                    <img id="profilePicture" src="../assets/profilepicture.png" class="img-fluid rounded-circle mb-3"
-                        width="70" height="70">
-                    <h3 id="userName">Name goes here....</h3>
-                    <p id="bio">Bio goes here....</p>
-                    <p id="contact">Contact details go here...</p>
+                    <img id="profilePicture" src="../assets/profilepicture.png" class="img-fluid rounded-circle mb-3" width="70" height="70">
+                    <input id="userNameInput" type="text" placeholder="Name goes here...." class="form-control mb-2">
+                    <textarea id="bioInput" placeholder="Bio goes here...." class="form-control mb-2"></textarea>
+                    <input id="contactInput" type="text" placeholder="Contact details go here..." class="form-control mb-2">
                     <p id="email">Email goes here...</p>
                     <div>
                         <input type="file" id="profilePicUpload" accept="image/*">
@@ -130,10 +129,10 @@
 
             // Function to update profile information on the page
             function updateProfile(profileData) {
-                document.getElementById('userName').textContent = profileData.name || 'Default Name';
+                document.getElementById('userNameInput').value = profileData.name || 'Default Name';
                 document.getElementById('profilePicture').src = profileData.profile_pic || '../assets/defaultProfilePic.png';
-                document.getElementById('bio').textContent = profileData.bio || 'No bio available.';
-                document.getElementById('contact').textContent = profileData.contact_details || 'No contact details available.';
+                document.getElementById('bioInput').value = profileData.bio || 'No bio available.';
+                document.getElementById('contactInput').value = profileData.contact_details || 'No contact details available.';
                 document.getElementById('email').textContent = profileData.email || 'No email available.';
             }
             async function updateProfileInfo() {
@@ -144,10 +143,10 @@
 
                 // Create FormData and append profile data
                 const formData = new FormData();
-                formData.append('name', document.querySelector('.profile-section h3').textContent);
-                formData.append('bio', document.getElementById('bio').textContent);
-                formData.append('contact', document.getElementById('contact').textContent);
-                formData.append('email', document.getElementById('email').textContent);
+                formData.append('name', document.getElementById('userNameInput').value);
+                formData.append('bio', document.getElementById('bioInput').value);
+                formData.append('contact', document.getElementById('contactInput').value);
+
 
                 // Append the file, if selected
                 const profilePicInput = document.getElementById('profilePicUpload');
@@ -168,12 +167,13 @@
                     }
 
                     const result = await response.json();
-                    console.log(result.message); // Or handle the updated profile information
+                    console.log(result.message); 
 
                     window.location.reload(); // Reload the page to reflect the changes
                     profilePicInput.value = ''; // Clear the file input
                 } catch (error) {
                     console.error('Error updating profile:', error);
+                    alert('Failed to update profile. Please try again.');
                 }
             }
 

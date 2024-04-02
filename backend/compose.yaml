@@ -65,7 +65,7 @@ services:
       retries: 5
 
   auth-service:
-    image: tshaun/auth:1.9
+    image: tshaun/auth:2.0
     environment:
       RABBITMQ_HOST: rabbitmq-mgmt
       RABBITMQ_PORT: 5672
