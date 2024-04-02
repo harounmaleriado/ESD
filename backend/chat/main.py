@@ -42,6 +42,7 @@ def generate_unique_code(length):
 
     return code
 
+
 def generate_unique_code():
     """
     Generate a unique room code that is 5 characters long and alphanumeric.
@@ -80,7 +81,8 @@ def home():
         code = request.form.get("code")
         join = request.form.get("join", False)
         create = request.form.get("create", False)
-
+        
+        
         if not name:
             return render_template("home.html", error="Please enter a name.")
         

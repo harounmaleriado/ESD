@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+</head>
+
+<body>
+    <ul id="messages"></ul>
+    <form id="form">
+        <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+    <script>
+        function parseJwt(token) {
+            var base64Payload = token.split('.')[1];
+            var payload = JSON.parse(window.atob(base64Payload));
+            return payload;
+        }
+
+        const token = localStorage.getItem('jwt_token');
+        const payload = parseJwt(token);
+        const currentUserId = payload.sub;
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sellerId = urlParams.get('sellerId');
+            const buyerId = urlParams.get('buyerId');
+
+            document.getElementById('form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const input = document.getElementById('input');
+                fetch('http://localhost:8000/api/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        buyer_id: buyerId, // Assuming this is set correctly from query params
+                        user_id: currentUserId,
+                        text: input.value,
+                        seller_id: sellerId
+                    }),
+                }).then(() => {
+                    input.value = '';
+                    pollMessages();
+                });
+            });
+
+            let lastId = 0;
+            function pollMessages() {
+                fetch(`http://localhost:8000/api/messages?last_id=${lastId}&sellerId=${sellerId}&buyerId=${buyerId}`)
+                    .then(response => response.json())
+                    .then(messages => {
+                        const messagesElement = document.getElementById('messages');
+                        messages.forEach(message => {
+                            const item = document.createElement('li');
+                            // Determine if the message is from the current user
+                            if (message.user_id === currentUserId) {
+                                item.textContent = `Me: ${message.text}`;
+                            } else {
+                                // Here you can differentiate further between seller and other participants if needed
+                                item.textContent = message.user_id === sellerId ? `Seller: ${message.text}` : `Buyer: ${message.text}`;
+                            }
+                            messagesElement.appendChild(item);
+                            lastId++; // Update the lastId to fetch newer messages next time
+                        });
+                    });
+            }
+
+            setInterval(pollMessages, 1000);
+        });
+    </script>
+
+</body>
+
+</html>
