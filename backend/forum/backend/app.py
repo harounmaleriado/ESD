@@ -66,7 +66,7 @@ def get_posts():
     posts = Post.query.all()
     return jsonify([post.to_dict() for post in posts]), 200
 
-@app.route('/posts/<int:post_id>/comments', methods=['POST'])
+@app.route('/posts/comments/<int:post_id>', methods=['POST'])
 def add_comment_to_post(post_id):
     data = request.json
     comment = Comment(title=data['title'], content=data['content'], post_id=post_id, image_url=data.get('image_url'), links=data.get('links'))
@@ -74,7 +74,7 @@ def add_comment_to_post(post_id):
     db.session.commit()
     return jsonify({'comment_id': comment.comment_id}), 201
 
-@app.route('/posts/<int:post_id>/comments', methods=['GET'])
+@app.route('/posts/comments/<int:post_id>', methods=['GET'])
 def get_comments_for_post(post_id):
     comments = Comment.query.filter_by(post_id=post_id).all()
     return jsonify([comment.to_dict() for comment in comments]), 200

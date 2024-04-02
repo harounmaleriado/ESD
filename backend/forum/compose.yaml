@@ -3,16 +3,16 @@ version: '3.8'
 services:
   web:
     build: ./backend
-    ports:
-      - "5000:5000"
     depends_on:
       - db
     environment:
       FLASK_APP: app.py
       FLASK_RUN_HOST: 0.0.0.0
+    networks:
+      - kong-net
 
   db:
-    image: mysql:5.7
+    image: mysql:8.0
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql      
     environment:
@@ -21,7 +21,9 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     ports:
-      - "3307:3306"
+      - "3308:3306"
+    networks:
+      - kong-net
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -30,9 +32,15 @@ services:
       PMA_USER: user
       PMA_PASSWORD: password
     ports:
-      - "8080:80"
+      - "8089:80"
     depends_on:
       - db
 
 volumes:
   db-data:
+
+
+networks:
+  kong-net:
+    name: kong-net
+    driver: bridge
