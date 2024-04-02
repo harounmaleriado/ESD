@@ -3,43 +3,10 @@
 <head>
     <title>Tech-Exchange</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth-compat.js"></script>
-    
-    
-    <script>
-
-        const firebaseConfig = { 
-            apiKey: "AIzaSyDvMDBVMhRhwjMCxByvbBlLEBI33glaKrU", 
-            authDomain: "is216-e-wasteless.firebaseapp.com", 
-            databaseURL: "https://is216-e-wasteless-default-rtdb.asia-southeast1.firebasedatabase.app", 
-            projectId: "is216-e-wasteless", 
-            storageBucket: "is216-e-wasteless.appspot.com", 
-            messagingSenderId: "739112462842", 
-            appId: "1:739112462842:web:a5d0e65a44163e23d4dc43", 
-            measurementId: "G-3Q1JMEGCBE" 
-        };
-        // const firebaseConfig = {
-        //     apiKey: "AIzaSyA6SDPUxrYWmZ5lboxGtSHVVRxpobsKYU4",
-        //     authDomain: "is216-proj-76064.firebaseapp.com",
-        //     projectId: "is216-proj-76064",
-        //     storageBucket: "is216-proj-76064.appspot.com",
-        //     messagingSenderId: "1065642689100",
-        //     appId: "1:1065642689100:web:4efe254f7846a27e4e2ae9"
-        // };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig)
-        const auth = firebase.auth()
-
-    </script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="axiosInterceptor.js"></script>  
-
-
 
     <style>
         body {
@@ -61,12 +28,6 @@
             flex-wrap: wrap;
             justify-content: center; 
         }
-
-        /* #post-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center; 
-        } */
         
         .product-box {
             text-align: center;
@@ -215,188 +176,88 @@
     </div>
     </div>
 </div>
-
-
-<section id="app">
-    <div class="container">
-        <div  class="container">
-            <div class="h1-container d-flex justify-content-between align-items-center"> 
-                <h1>General Posts</h1>
-                <button class="btn btn-primary" @click="openCreatePostModal">Create Post</button>  
-            </div>
-            <br>
-            <div class="search-bar">
-                <input type="text" class="form-control" placeholder="Search Posts" v-model="searchQuery">  
-            </div>
-        <br>
-           
-            <div id="post-list">
-                <!-- <div class="card mb-3" v-for="post in filteredPosts" :key="post.id" @click="redirectToCommentsPage(post)">
-                    <div class="card-header">
-                        {{ post.title }}
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">{{ post.message }}</p>
-                        <h6 class="card-subtitle mb-2 text-body-secondary">{{ post.username }}</h6>
-                    </div>
-                </div> -->
-
-                <div class="card mb-3" v-for="post in filteredPosts" :key="post.id" @click="redirectToCommentsPage(post)">
-                    <div class="card-body">
-                      <h5 class="card-title">{{ post.title }}</h5>
-                      <h6 class="card-subtitle mb-2 text-body-secondary">{{ post.username }}</h6>
-                      <p class="card-text">{{ post.message }}</p>
-                     
-                    </div>
-                  </div>
-            </div>
-            
+    <div id="app" class="container py-5">
+        <h1>Forum</h1>
+        <div class="mb-4">
+            <h2>Create Post</h2>
+            <input type="text" v-model="newPost.title" class="form-control mb-2" placeholder="Title">
+            <textarea v-model="newPost.content" class="form-control mb-2" placeholder="What's on your mind?"></textarea>
+            <button @click="submitPost" class="btn btn-primary">Post</button>
         </div>
-        
-    
-
-        <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>Create Post</h3>
-                        <button type="button" class="close btn btn-secondary" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-                        <form id="createPostForm">
-                            <div class="mb-3">
-                                <label for="title" class="form-label">Title</label>
-                                <input type="text" class="form-control" id="title" v-model="createPostForm.title">
+        <div v-for="post in posts" :key="post.post_id" class="mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.content }}</p>
+                    <div>
+                        <h6>Comments:</h6>
+                        <div v-for="comment in post.comments" :key="comment.comment_id" class="card mb-2">
+                            <div class="card-body">
+                                <strong>{{ comment.title }}</strong>
+                                <p>{{ comment.content }}</p>
                             </div>
-                            <div class="mb-3">
-                                <label for="message" class="form-label">Message</label>
-                                <textarea class="form-control" id="message" v-model="createPostForm.message" style="height: 150px; resize: vertical; overflow-y: auto;"></textarea>
-                            </div>
-                            <button type="button" class="btn btn-primary" @click="createPost">Submit Post</button>
-                        </form>
+                        </div>
+                        <input type="text" v-model="commentTitle" placeholder="Comment title" class="form-control">
+                        <textarea v-model="commentContent" placeholder="Write a comment" class="form-control my-2"></textarea>
+                        <button @click="submitComment(post.post_id)" class="btn btn-secondary">Comment</button>
                     </div>
-
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
-</section>
-    
     <script>
-
-        
-        
-    // fetch
-        const db = firebase.firestore();
-
         new Vue({
             el: '#app',
             data: {
                 posts: [],
-                searchQuery: '',
-                sortOption: 'priceUp',
-                selectedPost: {}, // This will hold the selected post data
-                createPostForm: { // This will bind to your form inputs
+                newPost: {
                     title: '',
-                    message: ''
+                    content: ''
                 },
-                commentForm: { // This will bind to your form inputs
-                    comment: ''
-                }
+                commentTitle: '',
+                commentContent: ''
             },
-            computed: {
-                filteredPosts() {
-                    let filtered = this.posts;
-                    if (this.searchQuery) {
-                        const searchLower = this.searchQuery.toLowerCase();
-                        filtered = filtered.filter(post => {
-                            // Concatenate brand and model with a space and check if the search query is included
-                            const fullPostName = (post.title + " " + post.username).toLowerCase();
-                            return fullPostName.includes(searchLower);
-                        });
-                    }
-                    return filtered;
-                }
-            },
-            created() {
-                this.fetchPosts();
+            mounted() {
+                this.loadPosts();
             },
             methods: {
-                redirectToCommentsPage(post) {
-                    // Get the ID of the selected post
-                    const postId = post.id;
-                    
-                    // Redirect to comments.html with the post ID as a query parameter
-                    window.location.href = `comments_gpTest.html?postId=${postId}`;
+                loadPosts() {
+                    axios.get('http://localhost:5000/posts')
+                        .then(response => {
+                            this.posts = response.data;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 },
-
-                async fetchPosts() {
-                    const postsRef = db.collection('posts');
-                    const snapshot = await postsRef.get();
-                    this.posts = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+                submitPost() {
+                    axios.post('http://localhost:5000/posts', this.newPost)
+                        .then(() => {
+                            this.newPost.title = '';
+                            this.newPost.content = '';
+                            this.loadPosts();
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 },
-
-                openCreatePostModal() {
-                    this.$nextTick(() => {
-                        new bootstrap.Modal(document.getElementById('createPostModal')).show();
-                    });
-                },
-              
-                async createPost() {
-                    const postData = {
-                        title: this.createPostForm.title, 
-                        message: this.createPostForm.message
+                submitComment(postId) {
+                    const commentData = {
+                        title: this.commentTitle,
+                        content: this.commentContent
                     };
-                    
-                    if (!postData.title || !postData.message) {
-                        alert("All fields must be filled!");
-                        return;
-                    }
-
-                    const user = firebase.auth().currentUser;
-                    // alert(user.displayName);
-
-                    if (user) {
-                        user.getIdToken()
-                            .then((token) => {
-                                return axios.post('/api/posts', { ...postData, username: user.displayName });
-                            })
-                            .then((response) => {
-                                if (response.data && response.data.error) {
-                                    throw new Error(`Server Error: ${response.data.error}`);
-                                }
-                                console.log('Post Created: ', response);
-                                alert('Post successfully created!');
-                                // Close the modal here if needed
-                                document.getElementById('createPostModal').style.display = 'none';
-                                // Redirect to the original CPU page
-                                window.location.href = 'generalpost1.html';
-                            })
-                            .catch((error) => {
-                                console.error('Error creating post: ', error.message);
-                                alert('Error creating post.');
-                            });
-                    } else {
-                        console.error('User not authenticated');
-                        alert("Please sign in to create a listing.");
-                    }
+                    axios.post(`http://localhost:5000/posts/${postId}/comments`, commentData)
+                        .then(() => {
+                            this.commentTitle = '';
+                            this.commentContent = '';
+                            this.loadPosts(); // Reload posts to show the new comments
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 }
-
             }
         });
-
-    
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
-
-    <footer>
-        <p>&copy; 2023 HARD CYCLE</p>
-    </footer>
 </body>
 </html>
