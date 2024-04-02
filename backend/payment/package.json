@@ -1,0 +1,15 @@
+{
+    "name": "payment-service",
+    "version": "1.0.0",
+    "description": "A brief description of your app",
+    "main": "app.js",
+    "scripts": {
+      "start": "node app.js"
+    },
+    "dependencies": {
+      "cors": "^2.8.5",
+      "express": "^4.17.1",
+      "stripe": "^8.142.0"
+    }
+  }
+  

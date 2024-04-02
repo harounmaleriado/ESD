@@ -26,8 +26,8 @@ app.post('/create-checkout-session', async (req, res) => {
     payment_intent_data: {
       capture_method: 'manual',
     },
-    success_url: 'http://localhost:8889/pages/profile.html', // Adjust accordingly
-    cancel_url: 'http://localhost:8889/cancel.html', // Adjust accordingly
+    success_url: 'http://localhost:8000/pages/profile.html', // Adjust accordingly
+    cancel_url: 'http://localhost:8000/cancel.html', // Adjust accordingly
   });
   console.log(session.payment_intent);
 

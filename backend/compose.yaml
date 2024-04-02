@@ -109,6 +109,11 @@ services:
       - rabbitmq
     networks:
       - kong-net
+  
+  payment-service:
+    image: tshaun/payment:1.0
+    networks:
+      - kong-net
 
   amqp-setup:
     image: tshaun/amqp_setup:1.0
